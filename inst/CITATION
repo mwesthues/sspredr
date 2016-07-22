@@ -1,0 +1,8 @@
+citHeader("To cite sspredr in publications use:")
+
+citEntry(entry = "Unpublished",
+  title        = "Single-Step Prediction",
+  author       = personList(as.person("Matthias Westhues"),
+                            as.person("Claas Heuer")),
+  school       = "University of Hohenheim",
+  year         = "2016")

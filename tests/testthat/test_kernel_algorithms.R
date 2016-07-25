@@ -1,4 +1,4 @@
-data(mice.X)
+data(mice, package = "BGLR")
 mice.snp <- mice.X[1:200, ]
 char_snps <- imp_snps
 storage.mode(char_snps) <- "character"

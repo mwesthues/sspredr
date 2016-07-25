@@ -36,7 +36,7 @@ If \code{algorithm} is \code{RadenII} and \code{feat_weights} is set
 }
 \examples{
  # Load a matrix with SNP genotypes encoded as numeric values
- data(mice)
+ data(mice, package = "BGLR")
  mice.snp <- mice.X[1:200, ]
 
  # Generate a vector of feature weights.
@@ -56,6 +56,5 @@ If \code{algorithm} is \code{RadenII} and \code{feat_weights} is set
  #  Compute a SNP-based relationship matrix based on Zhang.
  zhang <- build_kernel(mice.snp, algorithm = "Zhang")
  all.equal(radenII, zhang)
- @export
 }
 

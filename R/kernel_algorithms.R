@@ -22,7 +22,7 @@
 #'  by the sum of their variances.
 #' @examples
 #'  # Load a matrix with SNP genotypes encoded as numeric values
-#'  data(mice)
+#'  data(mice, package = "BGLR")
 #'  mice.snp <- mice.X[1:200, ]
 #'
 #'  # Generate a vector of feature weights.
@@ -42,7 +42,7 @@
 #'  #  Compute a SNP-based relationship matrix based on Zhang.
 #'  zhang <- build_kernel(mice.snp, algorithm = "Zhang")
 #'  all.equal(radenII, zhang)
-#'  @export
+#' @export
 build_kernel <- function(M, lambda = 0.01, algorithm = "RadenII",
                          feat_weights = NULL) {
  if (!typeof(M) %in% c("integer", "double")) {
@@ -56,7 +56,7 @@ build_kernel <- function(M, lambda = 0.01, algorithm = "RadenII",
                     "features in 'M'"))
       }
       weighted <- sapply(seq_len(ncol(M)), FUN = function(i) {
-        sqrt(feat_weights[i] * var(M[, i]))
+        sqrt(feat_weights[i] * stats::var(M[, i]))
       })
       W <- scale(M, center = TRUE, scale = weighted)
     } else {
@@ -69,7 +69,7 @@ build_kernel <- function(M, lambda = 0.01, algorithm = "RadenII",
     # center
     M_scaled <- scale(M, scale = FALSE)
     # get variances
-    vars <- apply(M_scaled, MARGIN = 2, FUN = var)
+    vars <- apply(M_scaled, MARGIN = 2, FUN = stats::var)
     # compute crossproduct and add lambda
     G <- ((1 - lambda) * tcrossprod(M_scaled)) / sum(vars)
   }

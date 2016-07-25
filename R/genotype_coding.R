@@ -4,10 +4,12 @@
 #'
 #' @param x A matrix. Genotype names are stored in rows whereas marker names
 #' are stored in columns.
-#' @param output character vector with output options.
-#' @param missing character vector providing the encoding of missing elements.
-#' @param mafThresh Numeric or complex vector specifying the minor allele
-#'  frequency threshold.
+#' @param major Character vector with names of major genotype at each locus.
+#' @param minor Character vector with names of minor genotype at each locus.
+#' @param major_coding Scalar specifying how to recode the major genotype.
+#' @param minor_coding Scalar specifying how to recode the minor genotype.
+#' @param het_coding Scalar specifying how to recode heterozygous loci.
+#' @param na_coding Scalar specifying how to recode missing values.
 #' @return A matrix with the same dimensions as \code{x} but with recoded SNP
 #'  genotypes.
 #' @examples

@@ -52,7 +52,7 @@ compute_maf <- function(x, output = c("markerNames", "markerMAF", "genoList"),
   }
   # Recode SNP markers to class 'character' if they are not yet incoded as such.
   if (class(c(x)) != "character") {
-    put <- sort(na.exclude(unique(c(x)[!c(x) %in% missing])))
+    put <- sort(stats::na.exclude(unique(c(x)[!c(x) %in% missing])))
       storage.mode(x) <- "character"
       x[x %in% missing] <- "??"
       missing <- "??"
@@ -70,7 +70,7 @@ compute_maf <- function(x, output = c("markerNames", "markerMAF", "genoList"),
     }
   }
   # Names of all genotypes present in the marker data matrix.
-  allgeno <- na.exclude(unique(c(x)))
+  allgeno <- stats::na.exclude(unique(c(x)))
 
   if (!all(nchar(allgeno) == 2)) {
     stop(cat("Alleles must be encoded by two letters."))

@@ -10,12 +10,17 @@ recode_snps(x, major, minor, major_coding, minor_coding, het_coding, na_coding)
 \item{x}{A matrix. Genotype names are stored in rows whereas marker names
 are stored in columns.}
 
-\item{output}{character vector with output options.}
+\item{major}{Character vector with names of major genotype at each locus.}
 
-\item{missing}{character vector providing the encoding of missing elements.}
+\item{minor}{Character vector with names of minor genotype at each locus.}
 
-\item{mafThresh}{Numeric or complex vector specifying the minor allele
-frequency threshold.}
+\item{major_coding}{Scalar specifying how to recode the major genotype.}
+
+\item{minor_coding}{Scalar specifying how to recode the minor genotype.}
+
+\item{het_coding}{Scalar specifying how to recode heterozygous loci.}
+
+\item{na_coding}{Scalar specifying how to recode missing values.}
 }
 \value{
 A matrix with the same dimensions as \code{x} but with recoded SNP

@@ -16,12 +16,10 @@
 #'  data(imp_snps)
 #'
 #'  # Return the names of all markers with a heterozygosity of less than 10%.
-#'  compute_het(imp_snps, output = "markerNames", missing = NA_real_,
-#'              hetThresh = 0.1)
+#'  compute_het(imp_snps, output = "markerNames", hetThresh = 0.1)
 #'
 #'  # Return the heterozygosity at each locus.
-#'  compute_het(imp_snps, output = "markerHeterozygosity", missing = NA_real_,
-#'              hetThresh = 0)
+#'  compute_het(imp_snps, output = "markerHeterozygosity", hetThresh = 0)
 #' @export
 ### Remove markers with high heterozygosity levels.
 compute_het <- function(x, output = c("markerNames", "markerHeterozygosity"),

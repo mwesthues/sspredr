@@ -1,3 +1,4 @@
+context("Heterozygosity input")
 test_that("no missing values allowed", {
   x <- imp_snps
   x_dim <- prod(dim(x))
@@ -16,6 +17,7 @@ test_that("heterozygosity exists", {
 })
 
 
+context("Heterozygosity output")
 test_that("output has correct class", {
   expect_is(compute_het(imp_snps, output = "markerNames"),
             class = "character")

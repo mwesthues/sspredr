@@ -1,3 +1,4 @@
+context("CallFreq input")
 test_that("'missing' has the same type as the elements of 'x'", {
   expect_error(compute_cf(marker_numeric, output = "markerNames",
                           missing = "??"))
@@ -9,6 +10,7 @@ test_that("'callThresh' is required when 'markerNames' are expected", {
                           missing = "??"))
 })
 
+context("CallFreq output")
 test_that("output is correct", {
   expect_is(compute_cf(marker_character, output = "markerNames",
                        missing = "??", callThresh = 0.9),

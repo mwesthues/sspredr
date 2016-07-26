@@ -1,3 +1,4 @@
+context("MAF input")
 test_that("arguments play nice", {
   expect_error(compute_maf(marker_numeric, output = "markerNames",
                            missing = "??",
@@ -18,6 +19,7 @@ test_that("numeric and character values are supported", {
                                mafThresh = 0))
 })
 
+context("MAF output")
 test_that("output structure is correct", {
   expect_length(compute_maf(marker_numeric, output = "markerNames",
                             missing = NA_real_,

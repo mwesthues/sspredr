@@ -21,13 +21,13 @@ test_that("no CV runs is duplicated", {
 # -----------------------------------------------------------------------------
 context("Number of parents in TRN")
 test_that("actual number of TRN-parents equal to specified number of parents",{
-  expect_equal(sspredr::check_trn(sample_cv(hybrid_nms,
-                                            n_mother = 39,
-                                            n_father = 33,
-                                            n_hybrid = 200,
-                                            min_size = 20,
-                                            rounds = 20L,
-                                            hybrid_split = "_")),
+  expect_equal(check_trn(sample_cv(hybrid_nms,
+                                   n_mother = 39,
+                                   n_father = 33,
+                                   n_hybrid = 200,
+                                   min_size = 20,
+                                   rounds = 20L,
+                                   hybrid_split = "_")),
                c(n_mother = 39, n_father = 33))
 })
 

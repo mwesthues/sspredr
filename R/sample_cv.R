@@ -10,7 +10,7 @@
 #' @param n_hybrid A numeric or integer scalar specifying the size of the
 #'  training set.
 #' @param min_size A numeric or integer scalar specifying the minimum size of
-#'  each test set class (T0, T1, T2).
+#'  each test set class (VS0, VS1, VS2).
 #' @param rounds A numeric or integer speciyfing the number of cross-validation
 #'  runs to sample.
 #' @param hybrid_split A character scalar specifying the character that

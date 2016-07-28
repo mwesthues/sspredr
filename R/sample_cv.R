@@ -117,7 +117,7 @@ sample_cv <- function(x, n_father, n_mother, n_hybrid, min_size, rounds,
         trn <- sample(x = t2_hybrids, size = n_hybrid, replace = FALSE)
         # Break out of the loop if the given condition cannot be met due to
         # the composition of D_T or F_T, respectively.
-          if ((proc.time()["elapsed"] - timer) > 5) {
+          if ((proc.time()["elapsed"] - timer) > 1) {
             while_cond <- "failed"
             break
           }

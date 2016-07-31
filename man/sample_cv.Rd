@@ -4,8 +4,8 @@
 \alias{sample_cv}
 \title{Cross-Validation Scheme Sampling}
 \usage{
-sample_cv(x, n_father, n_mother, n_hybrid, min_size, rounds, hybrid_split,
-  max_time = NULL, progress = NULL)
+sample_cv(x, n_father, n_mother, n_trn, min_size, rounds, hybrid_split,
+  progress = FALSE)
 }
 \arguments{
 \item{x}{A vector with hybrid names.}
@@ -16,7 +16,7 @@ sampled paternal parents in the training set.}
 \item{n_mother}{A numeric or integer scalar specifying the size of the
 sampled maternal parents in the training set.}
 
-\item{n_hybrid}{A numeric or integer scalar specifying the size of the
+\item{n_trn}{A numeric or integer scalar specifying the size of the
 training set.}
 
 \item{min_size}{A numeric or integer scalar specifying the minimum size of
@@ -28,14 +28,11 @@ runs to sample.}
 \item{hybrid_split}{A character scalar specifying the character that
 separates the maternal from the paternal parent in \code{x}.}
 
-\item{max_time}{A numeric or integer scalar specifying the number of minutes
-after which the sampling procedure should be terminated.}
-
 \item{progress}{A logical scalar. Set to 'TRUE' if a progress bar is desired.}
 }
 \value{
 A matrix of dimensions \code{length(x)} by \code{rounds} with
- columns containing assignments of hybrids to either TS, VS0, VS1 or VS2.
+ columns containing assignments of hybrids to either TRN, T0, T1 or T2.
 }
 \description{
 \code{sample_cv} returns a matrix with cross-validation (CV) folds.

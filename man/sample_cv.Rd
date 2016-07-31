@@ -39,9 +39,8 @@ A matrix of dimensions \code{length(x)} by \code{rounds} with
 }
 \examples{
 data(hybrid_nms)
-cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_hybrid = 200,
+cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_trn = 200,
                     min_size = 20, rounds = 20L, hybrid_split = "_")
-dim(cv_mat)
-cv_mat[1:5, 1:5]
+str(cv_mat)
 }
 

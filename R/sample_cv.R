@@ -21,10 +21,9 @@
 #'  columns containing assignments of hybrids to either TRN, T0, T1 or T2.
 #' @examples
 #' data(hybrid_nms)
-#' cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_hybrid = 200,
+#' cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_trn = 200,
 #'                     min_size = 20, rounds = 20L, hybrid_split = "_")
-#' dim(cv_mat)
-#' cv_mat[1:5, 1:5]
+#' str(cv_mat)
 #' @export
 sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
                       hybrid_split, progress = FALSE) {
@@ -118,9 +117,9 @@ sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
     t1 <- setdiff(x, c(t0, t2, trn))
     # Check whether all T1-hybrids have exactly one parent that is part of the
     # training set.
-    t1_mother <- vapply(strsplit(t1, split = "_"), "[[", 1, 
+    t1_mother <- vapply(strsplit(t1, split = "_"), "[[", 1,
                       FUN.VALUE = character(1))
-    t1_father <- vapply(strsplit(t1, split = "_"), "[[", 2, 
+    t1_father <- vapply(strsplit(t1, split = "_"), "[[", 2,
                        FUN.VALUE = character(1))
     t10 <- t1[t1_mother %in% m_trn & !t1_father %in% f_trn]
     t01 <- t1[!t1_mother %in% m_trn & t1_father %in% f_trn]
@@ -147,7 +146,7 @@ sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
     if (i != 1) {
       # Check whether all TST-sets are unique for each partition.
       if (!all(vapply(c("T0", "T1", "T2", "TRN"), FUN = function(tst_set) {
-        anyDuplicated(container[as.character(cv$ind) == tst_set, 1:i], 
+        anyDuplicated(container[as.character(cv$ind) == tst_set, 1:i],
                       MARGIN = 2) == 0
       }, FUN.VALUE = logical(1)))) next
     }

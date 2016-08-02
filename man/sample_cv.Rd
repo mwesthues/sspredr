@@ -4,7 +4,7 @@
 \alias{sample_cv}
 \title{Cross-Validation Scheme Sampling}
 \usage{
-sample_cv(x, n_father, n_mother, n_trn, min_size, rounds, hybrid_split,
+sample_cv(x, n_father, n_mother, n_hyb_trn, min_size, rounds, hybrid_split,
   progress = FALSE)
 }
 \arguments{
@@ -16,7 +16,7 @@ sampled paternal parents in the training set.}
 \item{n_mother}{A numeric or integer scalar specifying the size of the
 sampled maternal parents in the training set.}
 
-\item{n_trn}{A numeric or integer scalar specifying the size of the
+\item{n_hyb_trn}{A numeric or integer scalar specifying the size of the
 training set.}
 
 \item{min_size}{A numeric or integer scalar specifying the minimum size of
@@ -39,8 +39,9 @@ A matrix of dimensions \code{length(x)} by \code{rounds} with
 }
 \examples{
 data(hybrid_nms)
-cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_trn = 200,
-                    min_size = 20, rounds = 20L, hybrid_split = "_")
+cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33,
+                    n_hyb_trn = 200, min_size = 20, rounds = 20L,
+                    hybrid_split = "_")
 str(cv_mat)
 }
 

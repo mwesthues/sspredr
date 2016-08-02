@@ -7,7 +7,7 @@
 #'  sampled maternal parents in the training set.
 #' @param n_father A numeric or integer scalar specifying the size of the
 #'  sampled paternal parents in the training set.
-#' @param n_trn A numeric or integer scalar specifying the size of the
+#' @param n_hyb_trn A numeric or integer scalar specifying the size of the
 #'  training set.
 #' @param min_size A numeric or integer scalar specifying the minimum size of
 #'  each test set class (VS0, VS1, VS2).
@@ -21,17 +21,19 @@
 #'  columns containing assignments of hybrids to either TRN, T0, T1 or T2.
 #' @examples
 #' data(hybrid_nms)
-#' cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_trn = 200,
-#'                     min_size = 20, rounds = 20L, hybrid_split = "_")
+#' cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33,
+#'                     n_hyb_trn = 200, min_size = 20, rounds = 20L,
+#'                     hybrid_split = "_")
 #' str(cv_mat)
 #' @export
-sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
+sample_cv <- function(x, n_father, n_mother, n_hyb_trn, min_size, rounds,
                       hybrid_split, progress = FALSE) {
   # Input testing.
-  scalar_types <- vapply(list(n_mother, n_father, n_trn, min_size, rounds),
+  scalar_types <- vapply(list(n_mother, n_father, n_hyb_trn, min_size, rounds),
                          FUN = typeof, FUN.VALUE = character(1))
   stopifnot(all(scalar_types %in% c("double", "integer")))
-  scalar_lengths <- vapply(list(n_mother, n_father, n_trn, min_size, rounds),
+  scalar_lengths <- vapply(list(n_mother, n_father, n_hyb_trn, min_size,
+                                rounds),
                            FUN = length, FUN.VALUE = integer(1))
   stopifnot(all(scalar_lengths == 1))
   stopifnot(typeof(x) == "character")
@@ -99,7 +101,7 @@ sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
         }
       }
       # Stop T2 sampling once the TRN is large enough.
-      if ((length(t2_trn) - length(t2_idx)) == n_trn) break
+      if ((length(t2_trn) - length(t2_idx)) == n_hyb_trn) break
     }
     t2 <- trn_mat_copy[t2_idx]
     n_t2 <- length(t2)
@@ -109,7 +111,7 @@ sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
     # Assign all non T2-hybrids to TRN.
     trn <- t2_trn[!t2_trn %in% t2]
     n_trn <- length(trn)
-    if (n_trn < n_trn) {
+    if (n_trn < n_hyb_trn) {
       next
     }
     stopifnot(all(c(m_trn, f_trn) %in% unlist(strsplit(trn, split = "_"))))
@@ -159,7 +161,7 @@ sample_cv <- function(x, n_father, n_mother, n_trn, min_size, rounds,
                                      digits = 2),
                          100 * round(n_father / length(unique_father),
                                      digits = 2),
-                         "_trn=", n_trn, "_min_size=", min_size,
+                         "_trn=", n_hyb_trn, "_min_size=", min_size,
                          "_m=", n_mother, "_f=", n_father, ".RDS")
   out
 }

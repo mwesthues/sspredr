@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' data(hybrid_nms)
-#' check_cv(sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_trn = 200,
+#' check_cv(sample_cv(hybrid_nms, n_mother = 39, n_father = 33, n_hyb_trn = 200,
 #'                     min_size = 25, rounds = 100, hybrid_split = "_"))
 #' @export
 check_cv <- function(x, hybrid_split = "_") {

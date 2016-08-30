@@ -13,7 +13,8 @@
 #' data("hybrid_nms", "imp_snps")
 #' geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
 #'                FUN.VALUE = character(1))
-#' eta <- complete_eta(x = imp_snps, geno = geno, bglr_model = "BRR")
+#' x <- imp_snps[rownames(imp_snps) %in% geno, ]
+#' eta <- complete_eta(x = x, geno = geno, bglr_model = "BRR")
 #' str(eta)
 #' @export
 complete_eta <- function(x, geno, bglr_model) {

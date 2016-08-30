@@ -27,7 +27,9 @@ A list with model parameters used as input in the \code{BGLR()} call.
 data("hybrid_nms", "mrna", "imp_snps")
 geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
                FUN.VALUE = character(1))
-eta <- impute_eta(x = imp_snps, y = mrna, geno = geno, bglr_model = "BRR")
+x <- imp_snps[rownames(imp_snps) \%in\% geno, ]
+y <- mrna[rownames(mrna) \%in\% geno, ]
+eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
 str(eta)
 }
 

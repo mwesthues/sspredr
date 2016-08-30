@@ -1,11 +1,11 @@
 context("Heterozygosity input")
-test_that("no missing values allowed", {
+test_that("missing values allowed", {
   x <- imp_snps
   x_dim <- prod(dim(x))
   x_na <- sample(x_dim, size = 5, replace = FALSE)
   x[x_na] <- NA_real_
-  expect_error(compute_het(x, output = "markerNames"),
-               info = "NAs not allowed in 'x'")
+  expect_is(compute_het(x, output = "markerHeterozygosity"),
+            "numeric")
 })
 
 test_that("heterozygosity exists", {

@@ -5,7 +5,7 @@
 \title{Heterozygosity}
 \usage{
 compute_het(x, output = c("markerNames", "markerHeterozygosity"),
-  hetThresh = 0)
+  hetThresh = 0, na_coding = "??")
 }
 \arguments{
 \item{x}{A matrix. Genotype names are stored in rows whereas marker names

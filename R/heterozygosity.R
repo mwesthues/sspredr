@@ -23,18 +23,24 @@
 #' @export
 ### Remove markers with high heterozygosity levels.
 compute_het <- function(x, output = c("markerNames", "markerHeterozygosity"),
-                        hetThresh = 0) {
+                        hetThresh = 0, na_coding = "??") {
 
-  if (anyNA(x)) stop("NAs present")
-  if (is.null(colnames(x))) stop("Assign colnames to x")
-  output <- match.arg(output)
-  allgeno <- as.character(unique(c(x)))
-  if (length(allgeno) != 3) {
-    stop("No heterozygosity in the data")
+  # Recode missing values that are actually encoded as 'NA' to avoid conflicts.
+  if (anyNA(x)) {
+    if (storage.mode(x) == "double") {
+      na_coding <- 99
+    } else if (storage.mode(x) == "character") {
+      na_coding <- "??"
+    }
+    x[is.na(x)] <- na_coding
   }
 
+  if (is.null(colnames(x))) stop("Assign colnames to x")
+  output <- match.arg(output)
+  allgeno <- unique(c(x[x != na_coding]))
+
   if (storage.mode(x) == "double") {
-    put <- sort(unique(c(x)))
+    put <- sort(allgeno)
     if (mean(put[c(1, 3)]) != put[2]) {
         stop("Value for heterozygotes must be equal to the mean of homozygotes")
       } else {
@@ -54,10 +60,12 @@ compute_het <- function(x, output = c("markerNames", "markerHeterozygosity"),
   namesplit <- strsplit(allgeno, split = "")
   # ... and extract heterozygous genotypes.
   het <- allgeno[unlist(lapply(namesplit, function(x) x[1] != x[2]))]
+  # Set all missing values to 'NA_character_'.
+  x[x %in% na_coding] <- NA_character_
   # Code heterozygous genotypes as '1' and all others as '0'.
   x[x %in% het] <- "1"
   x[x != "1"] <- "0"
-  snp_het <- colSums(x == "1") / nrow(x)
+  snp_het <- colSums(x == "1", na.rm = TRUE) / nrow(x)
   switch(EXPR = output,
          markerHeterozygosity = snp_het,
          markerNames = colnames(x[, snp_het <= hetThresh]))

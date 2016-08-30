@@ -25,7 +25,8 @@ A list with model parameters used as input in the \code{BGLR()} call.
 }
 \examples{
 data("hybrid_nms", "mrna", "imp_snps")
-geno <- unique(unlist(strsplit(hybrid_nms, split = "_")))
+geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
+               FUN.VALUE = character(1))
 eta <- impute_eta(x = imp_snps, y = mrna, geno = geno, bglr_model = "BRR")
 str(eta)
 }

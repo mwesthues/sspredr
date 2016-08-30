@@ -2,6 +2,7 @@
 
 export(build_kernel)
 export(check_cv)
+export(complete_eta)
 export(compute_cf)
 export(compute_het)
 export(compute_maf)

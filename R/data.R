@@ -35,3 +35,12 @@
 #' @format A character vector with hybrid names where the two parents are
 #'  separated by an underscore '_'.
 "hybrid_nms"
+
+
+#' Transcriptomic data
+#'
+#' A matrix containing the gene expression values for 44 genotypes and 500
+#' mRNAs.
+#'
+#' @format A matrix with 44 rows and 500 columns.
+"mrna"

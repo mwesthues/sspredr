@@ -15,6 +15,8 @@ are stored in columns. No missing values are allowed.}
 
 \item{hetThresh}{Numeric or complex vector specifying the heterozygosity
 threshold.}
+
+\item{na_coding}{Scalar providing the encoding of missing elements.}
 }
 \value{
 If \code{output} is "markerNames" a character vector with marker

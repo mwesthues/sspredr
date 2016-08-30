@@ -7,6 +7,7 @@
 #' @param output Character vector with output options.
 #' @param hetThresh Numeric or complex vector specifying the heterozygosity
 #'  threshold.
+#' @param na_coding Scalar providing the encoding of missing elements.
 #' @return If \code{output} is "markerNames" a character vector with marker
 #'  names that have passed the quality check will be returned. If \code{output}
 #'  is "markerHeterozygosity" a numeric vector with the heterozygosity at each

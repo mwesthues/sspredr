@@ -12,7 +12,7 @@ Description: Unbiased trait prediction in a single step using data from
     data) to impute missing data of another predictor (e.g. transcriptomic
     data).
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.2.0)
 License: GPL (>= 2)
 LazyData: TRUE
 Imports:

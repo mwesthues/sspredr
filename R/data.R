@@ -44,3 +44,10 @@
 #'
 #' @format A matrix with 44 rows and 500 columns.
 "mrna"
+
+#' Phenotypic data
+#'
+#' A matrix containing the agronomic data for 532 hybrids and two traits.
+#'
+#' @format A matrix with 532 rows and two columns.
+"Pheno"

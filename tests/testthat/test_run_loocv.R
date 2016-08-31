@@ -1,4 +1,4 @@
-data("hybrid_nms", "mrna", "imp_snps", "Pheno", "eta")
+data("hybrid_nms", "mrna", "imp_snps", "Pheno")
 geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
                FUN.VALUE = character(1))
 x <- imp_snps[rownames(imp_snps) %in% geno, ]

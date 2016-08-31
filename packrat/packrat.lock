@@ -12,6 +12,16 @@ Source: CRAN
 Version: 1.0.4
 Hash: 6677bc134e3eb8f99df7a0cbd07af7f4
 
+Package: BH
+Source: CRAN
+Version: 1.60.0-2
+Hash: be2967bcff307e561d9ba17faf03205c
+
+Package: DBI
+Source: CRAN
+Version: 0.5
+Hash: b4baa1938fb20e76519e8aa253fe60a6
+
 Package: Matrix
 Source: CRAN
 Version: 1.2-6
@@ -26,6 +36,11 @@ Package: Rcpp
 Source: CRAN
 Version: 0.12.6
 Hash: 79f89fabd832de0a2e60aa05d9027f32
+
+Package: assertthat
+Source: CRAN
+Version: 0.1
+Hash: 0afb92b59b02593c70ff8046700ba9d3
 
 Package: brew
 Source: CRAN
@@ -97,6 +112,11 @@ Version: 1.13
 Hash: 8d686cbee88c93b735281a22b2ca59dd
 Requires: digest, evaluate, formatR, highr, markdown, stringr, yaml
 
+Package: lazyeval
+Source: CRAN
+Version: 0.2.0
+Hash: 3d6e7608e65bbf5cb170dab1e3c9ed8b
+
 Package: magrittr
 Source: CRAN
 Version: 1.5
@@ -166,6 +186,12 @@ Source: CRAN
 Version: 1.0.2
 Hash: 88d5291104227f9dc2e7c7c1d0eb6c74
 Requires: R6, crayon, digest, magrittr, praise
+
+Package: tibble
+Source: CRAN
+Version: 1.2
+Hash: 78c9af8db109a775592d1f7819316b01
+Requires: Rcpp, assertthat, lazyeval
 
 Package: whisker
 Source: CRAN

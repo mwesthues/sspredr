@@ -1,10 +1,10 @@
-#' Leave-one-out cross validation
+#' Cross validated prediction
 #'
-#' \code{run_loocv} returns a data frame with predicted values.
+#' \code{run_cv} returns a data frame with predicted values.
 #'
 #' @param Pheno A matrix with phenotypic BLUES.
 #' @param ETA A list with ETA-objects for BGLR.
-#' @param hybrid Boolean. Indicates whether prediction is done for hybrids.
+#' @param cv A data.frame with the cross validation scheme.
 #' @param father_idx NULL. A numeric or integer indicating the position of the
 #'  parental ID in \code{hybrid}.
 #' @param mother_idx NULL. A numeric or integer indicating the position of the
@@ -28,6 +28,7 @@
 #'                FUN.VALUE = character(1))
 #' x <- imp_snps[rownames(imp_snps) %in% geno, ]
 #' y <- mrna[rownames(mrna) %in% geno, ]
+#' # BGLR ETA objects
 #' eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
 #' eta[] <- lapply(seq_along(eta), FUN = function(i) {
 #'   dat <- eta[[i]]
@@ -36,18 +37,27 @@
 #'   dat[["X"]] <- x
 #'   dat
 #' })
+#' # CV scheme generation
+#' cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33,
+#'                     n_hyb_trn = 200, min_size = 20, rounds = 2L,
+#'                     hybrid_split = "_")
+#' cv_mat <- cv_mat[[1]]
+#' colnames(cv_mat) <- seq_len(ncol(cv_mat))
+#' rownames(cv_mat) <- gsub("DF_", replacement = "", x = rownames(cv_mat))
+#' cv <- as.data.frame(cv_mat)
+#' cv$Sample_ID <- rownames(cv)
+#' cv <- tidyr::gather(cv, Run, Set, -Sample_ID)
 #' dir.create("./bglr_out")
-#' run_loocv(Pheno = Pheno, ETA = eta, hybrid = TRUE, father_idx = 2,
-#'           mother_idx = 1, split_char = "_", trait = "gtm", iter = 2500L,
-#'           speed_tst = FALSE, run = 1L, verbose = FALSE,
-#'           out_loc = "./bglr_out/")
+#' # Run the prediction
+#' run_cv(Pheno = Pheno, ETA = eta, cv = cv, father_idx = 2, mother_idx = 1,
+#'        split_char = "_", trait = "gtm", iter = 2500L,
+#'        speed_tst = FALSE, run = 1L, verbose = FALSE,
+#'        out_loc = "./bglr_out/")
 #' unlink("./bglr_out", recursive = TRUE)
 #' @export
-run_loocv <- function(Pheno, ETA, hybrid = TRUE,
-                      father_idx = NULL, mother_idx = NULL,
-                      split_char = NULL, trait, iter,
-                      speed_tst = FALSE,
-                      run = 1L, verbose = FALSE, out_loc) {
+run_cv <- function(Pheno, ETA, cv, father_idx, mother_idx, split_char,
+                   trait, iter, speed_tst, run, verbose = FALSE,
+                   out_loc) {
 
   # Operations required for input checks.
   nrow_eta <- unique(vapply(ETA, FUN = function(x) {
@@ -61,8 +71,20 @@ run_loocv <- function(Pheno, ETA, hybrid = TRUE,
   stopifnot(identical(nrow_eta, nrow(Pheno)))
   stopifnot(class(trait) == "character")
   stopifnot(length(trait) == 1)
-  stopifnot(typeof(iter) == "integer")
+  stopifnot(typeof(iter) %in% c("numeric", "integer"))
   stopifnot(typeof(speed_tst) == "logical")
+
+  # Hybrid progeny and parent genotypes names for LOOCV-matching.
+  hybrid <- rownames(Pheno)
+  father <- vapply(strsplit(hybrid, split = split_char), FUN = "[[",
+                   father_idx, FUN.VALUE = character(1))
+  mother <- vapply(strsplit(hybrid, split = split_char), FUN = "[[",
+                   mother_idx, FUN.VALUE = character(1))
+
+  # Ensure that both, the phenotypic data and the CV sampling scheme are
+  # complete.
+  stopifnot(length(c(setdiff(cv$Sample_ID, hybrid),
+                     setdiff(hybrid, cv$Sample_ID))) == 0)
 
   # Ensure that the elements of ETA and the phenotyipic values are in the same
   # order.
@@ -71,69 +93,40 @@ run_loocv <- function(Pheno, ETA, hybrid = TRUE,
   })
   eta_rownms <- Reduce(intersect, eta_rownms)
   stopifnot(identical(rownames(Pheno), eta_rownms))
+  cv_cur <- cv[cv$Run == run, ]
+  cv_cur <- cv_cur[match(hybrid, cv_cur$Sample_ID), ]
+  stopifnot(identical(rownames(Pheno), cv_cur$Sample_ID))
 
-  # Hybrid progeny and parent genotypes names for LOOCV-matching.
-  geno <- rownames(Pheno)
-  if (isTRUE(hybrid)) {
-    if (any(vapply(list(father_idx, mother_idx), FUN = is.null,
-                   FUN.VALUE = logical(1)))) {
-      stop("Specify position of paternal and maternal IDs for hybrids")
-    }
-    if (is.null(split_char)) {
-      stop("Specify split character for hybrid names")
-    }
-    # Paternal IDs
-    father <- vapply(strsplit(geno, split = split_char), FUN = "[[",
-                     father_idx,
-                     FUN.VALUE = character(1))
-    # Maternal IDs
-    mother <- vapply(strsplit(geno, split = split_char), FUN = "[[",
-                     mother_idx,
-                     FUN.VALUE = character(1))
-    # Use only T0 hybrids for the training set.
-    tst <- intersect(grep(mother[run], x = geno, invert = TRUE),
-                     grep(father[run], x = geno, invert = TRUE))
-  } else {
-    tst <- grep(geno[run], x = geno)
-  }
-	y <- Pheno[, trait]
-	y[-tst] <- NA_real_
+  # Get the indices of all test-set (T0, T1, T2) hybrids, define another vector
+  # of thenotypic records and set the values of the latter to 'NA' if they belong
+  # to a genotype that is part of the test set 'tst'.
+  stopifnot(all(cv_cur$Set %in% c("T0", "T1", "T2", "TRN")))
+  tst0 <- cv_cur$Set == "T0"
+  tst1 <- cv_cur$Set == "T1"
+  tst2 <- cv_cur$Set == "T2"
+  tst <- as.logical(tst0 + tst1 + tst2)
+  y <- yNA <- Pheno[, trait]
+  yNA[tst] <- NA_real_
 
   if (isTRUE(speed_tst)) {
-    systime <- system.time(replicate(10, BGLR::BGLR(y = y,
+    systime <- system.time(replicate(10, BGLR::BGLR(y = yNA,
                                                     ETA = ETA,
                                                     nIter = iter,
-                                                    saveAt = out_loc,
                                                     burnIn = iter / 2,
+                                                    saveAt = out_loc,
                                                     verbose = verbose)))
+    stopifnot(class(systime) == "proc_time")
     systime
   } else if (!isTRUE(speed_tst)) {
-
-    # BGLR implementation
-    res <- data.frame(Phenotype = NA_character_,
-                      Geno = NA_character_,
-                      Mother = NA_character_,
-                      Father = NA_character_,
-                      y = NA_complex_,
-                      yhat = NA_complex_)
-
-	  # run the model (GBLUP)
-    mod_BGLR <- BGLR::BGLR(y = y,
+    # RUN BGLR
+    mod_BGLR <- BGLR::BGLR(y = yNA,
                            ETA = ETA,
                            nIter = iter,
                            burnIn = iter / 2,
                            saveAt = out_loc,
                            verbose = verbose)
-
-    # store results
-    res$Phenotype <- trait
-    res$Geno <- geno[run]
-    if (isTRUE(hybrid)) {
-      res$Mother <- mother[run]
-      res$Father <- father[run]
-    }
-    res$y <- Pheno[run, trait]
-    res$yhat <- mod_BGLR$yHat[run]
-    res
+    pred_ability <- stats::cor(y[tst], mod_BGLR$yHat[tst])
+    data.frame(Run = run,
+               Pred_Ability = pred_ability)
   }
 }

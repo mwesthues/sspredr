@@ -60,7 +60,7 @@ context("Prediction")
 test_that("prediction worked", {
   expect_is(pred_res, "data.frame")
   expect_false(anyNA(pred_res))
-  expect_equal(run, pred_res$Run)
+  expect_equal(run, unique(pred_res$Run))
 })
 
 context("Speed test")

@@ -125,8 +125,9 @@ run_cv <- function(Pheno, ETA, cv, father_idx, mother_idx, split_char,
                            burnIn = iter / 2,
                            saveAt = out_loc,
                            verbose = verbose)
-    pred_ability <- stats::cor(y[tst], mod_BGLR$yHat[tst])
     data.frame(Run = run,
-               Pred_Ability = pred_ability)
+               y = y,
+               yHat = mod_BGLR$yHat,
+               Set = cv_cur$Set)
   }
 }

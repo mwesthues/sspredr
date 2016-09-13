@@ -14,6 +14,6 @@ test_that("all random and fixed effects are included", {
 })
 
 test_that("output dimensions match input", {
-  expect_equal(ncol(eta[[1]][["X"]]), 3)
+  expect_equal(ncol(eta[[1]][["X"]]), 2)
   expect_equal(ncol(eta[[2]][["X"]]), ncol(y))
 })

@@ -60,6 +60,8 @@ impute_eta <- function(x, y, geno = NULL, bglr_model) {
   # not") to y.
   geno_fct <- as.factor(as.character(ifelse(geno %in% geno1, yes = 1, no = 0)))
   X <- Matrix::sparse.model.matrix(~-1 + geno_fct, drop.unused.levels = FALSE)
+  # Remove one of the two columns because to ensure linear independence.
+  X <- X[, 1, drop = FALSE]
   rownames(X) <- geno
 
   y <- y[nm2, ]

@@ -37,11 +37,9 @@ complete_eta <- function(x, geno, bglr_model) {
   rownames(Z) <- geno
 
   # x-kernel
-  G <- build_kernel(x, lambda = 0.01, algorithm = "RadenII")
-  MG <- methods::as(Z %*% G, "matrix")
+  MG <- methods::as(Z %*% x, "matrix")
 
   # Output tests
-  stopifnot(identical(colnames(MG), comgeno))
   stopifnot(identical(rownames(MG), geno))
 
   list(list(X = MG, model = bglr_model))

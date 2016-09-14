@@ -1,8 +1,8 @@
 Package: sspredr
 Type: Package
 Title: Single-Step Prediction
-Version: 0.0.0.9003
-Date: 2016-08-31
+Version: 0.0.0.9004
+Date: 2016-09-14
 Authors@R: c(
     person("Matthias", "Westhues", email = "westhues.matthias@gmail.com",
            role = c("cre", "aut"))

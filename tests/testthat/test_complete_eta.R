@@ -13,6 +13,6 @@ test_that("effects and model as expected", {
 })
 
 test_that("output dimensions match input", {
-  expect_equal(ncol(eta[[1]][["X"]]), length(unique(geno)))
+  expect_equal(ncol(eta[[1]][["X"]]), ncol(x))
   expect_equal(nrow(eta[[1]][["X"]]), length(geno))
 })

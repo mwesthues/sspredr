@@ -74,6 +74,12 @@ Source: CRAN
 Version: 0.6.9
 Hash: fd55d5a024f160fc001a5ece1e27782d
 
+Package: dplyr
+Source: CRAN
+Version: 0.5.0
+Hash: e34869d6b47a9b9579c2e98c20aa7609
+Requires: BH, DBI, R6, Rcpp, assertthat, lazyeval, magrittr, tibble
+
 Package: evaluate
 Source: CRAN
 Version: 0.9
@@ -159,6 +165,12 @@ Source: CRAN
 Version: 1.0.0
 Hash: 77da8f1df873a4b91e5c4a68fe2fb1b6
 
+Package: purrr
+Source: CRAN
+Version: 0.2.2
+Hash: b0772f5a8305daf88317d1e6a1a7a367
+Requires: BH, Rcpp, dplyr, lazyeval, magrittr
+
 Package: roxygen2
 Source: CRAN
 Version: 5.0.1
@@ -192,6 +204,12 @@ Source: CRAN
 Version: 1.2
 Hash: 78c9af8db109a775592d1f7819316b01
 Requires: Rcpp, assertthat, lazyeval
+
+Package: tidyr
+Source: CRAN
+Version: 0.6.0
+Hash: f57335fdd32a78c1eaf2317f4ed5936e
+Requires: Rcpp, dplyr, lazyeval, magrittr, stringi, tibble
 
 Package: whisker
 Source: CRAN

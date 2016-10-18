@@ -134,6 +134,7 @@ run_loocv <- function(Pheno, ETA, hybrid = TRUE,
     }
     res$y <- Pheno[run, trait]
     res$yhat <- mod_BGLR$yHat[run]
+    res$var_yhat <- mod_BGLR$SD.yHat[run] ^ 2
     res
   }
 }

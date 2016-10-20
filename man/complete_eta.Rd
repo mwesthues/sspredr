@@ -4,13 +4,16 @@
 \alias{complete_eta}
 \title{Construction of ETA with complete predictor data}
 \usage{
-complete_eta(x, geno, bglr_model)
+complete_eta(x, geno, as_kernel = FALSE, bglr_model)
 }
 \arguments{
 \item{x}{A matrix with BLUES of the complete predictor.}
 
 \item{geno}{NULL. Optional character vector with names corresponding to one
 of the two parental pools.}
+
+\item{as_kernel}{logical. Should a feature matrix or a variance covariance
+matrix be returned?}
 
 \item{bglr_model}{A character specifying the algorithm that shall be used \
 when calling \code{BGLR()}.}

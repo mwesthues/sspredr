@@ -5,6 +5,8 @@
 #' @param x A matrix with BLUES of the complete predictor.
 #' @param geno NULL. Optional character vector with names corresponding to one
 #'  of the two parental pools.
+#' @param as_kernel logical. Should a feature matrix or a variance covariance
+#'  matrix be returned?
 #' @param bglr_model A character specifying the algorithm that shall be used \
 #'  when calling \code{BGLR()}.
 #'
@@ -16,8 +18,9 @@
 #' x <- imp_snps[rownames(imp_snps) %in% geno, ]
 #' eta <- complete_eta(x = x, geno = geno, bglr_model = "BRR")
 #' str(eta)
+#' @importFrom magrittr %>%
 #' @export
-complete_eta <- function(x, geno, bglr_model) {
+complete_eta <- function(x, geno, as_kernel = FALSE, bglr_model) {
   # Input tests
   if (class(x) != "matrix") stop("'x' is not a matrix")
   if (class(geno) != "character") stop("'geno' is not a character vector")
@@ -27,7 +30,14 @@ complete_eta <- function(x, geno, bglr_model) {
   x <- x[rownames(x) %in% comgeno, ]
   # Sort
   x <- x[match(comgeno, rownames(x)), ]
-  x <- x[, matrixStats::colVars(x) != 0]
+  M <- x[, matrixStats::colVars(x) != 0]
+
+  if (isTRUE(as_kernel)) {
+    G <- build_kernel(M = M)
+    L <- G %>% chol() %>% t()
+  } else {
+    L <- M
+  }
 
   # Design matrix to map GCA effects to corresponding parents in y.
   Z <- Matrix::sparse.model.matrix(~-1 + factor(geno),
@@ -36,8 +46,7 @@ complete_eta <- function(x, geno, bglr_model) {
   Z <- Z[, match(comgeno, colnames(Z))]
   rownames(Z) <- geno
 
-  # x-kernel
-  MG <- methods::as(Z %*% x, "matrix")
+  MG <- as.matrix(Z %*% L)
 
   # Output tests
   stopifnot(identical(rownames(MG), geno))

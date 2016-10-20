@@ -5,7 +5,7 @@ x <- imp_snps[rownames(imp_snps) %in% geno, ]
 y <- mrna[rownames(mrna) %in% geno, ]
 eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
 
-context("Content of ETA")
+context("Content of ETA when imputing only with genomic info")
 test_that("all random and fixed effects are included", {
   expect_length(eta, n = 3)
   expect_identical(vapply(eta, FUN = function(x) x$model,

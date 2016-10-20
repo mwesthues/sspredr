@@ -77,3 +77,12 @@
 #'
 #' @format A matrix with 96 rows and 400 columns.
 "mice_mrna"
+
+
+#' Mice phenotypic data
+#'
+#' A data frame with obesity records for 150 mice taken from the 'BGLR' package.
+#'
+#' @format A data.frame with 150 rows and 2 columns.
+"mice_pheno"
+

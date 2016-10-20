@@ -1,3 +1,4 @@
+utils::globalVariables(c("."))
 #' Imputation of mRNAs via pedigree and genomic information.
 #'
 #' \code{impute2} returns a list with BGLR model parameters.
@@ -18,9 +19,6 @@
 #'                bglr_model = "BRR")
 #' str(eta)
 #' @importFrom magrittr %>%
-#' @import purrr
-#' @import dplyr
-#' @import tibble
 #' @export
 impute2 <- function(ped, snp, mrna, geno, bglr_model) {
   # Input tests

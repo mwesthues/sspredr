@@ -7,17 +7,17 @@
 impute2(ped, snp, mrna, geno, bglr_model)
 }
 \arguments{
+\item{ped}{A matrix with pedigree records.}
+
+\item{snp}{A matrix with SNP records.}
+
+\item{mrna}{A matrix with transcriptomic BLUEs.}
+
 \item{geno}{NULL. Optional character vector with names corresponding to one
 of the two parental pools.}
 
 \item{bglr_model}{A character specifying the algorithm that shall be used \
 when calling \code{BGLR()}.}
-
-\item{x}{A matrix with pedigree records.}
-
-\item{y}{A matrix with SNP records.}
-
-\item{z}{A matrix with transcriptomic BLUEs.}
 }
 \value{
 A list with model parameters used as input in the \code{BGLR()} call.

@@ -17,6 +17,7 @@ License: GPL (>= 2)
 LazyData: TRUE
 Imports:
     BGLR (>= 1.0.4),
+    dplyr (>= 0.5.0),
     magrittr (>= 1.5),
     MASS (>= 7.3),
     Matrix (>= 1.2-6),

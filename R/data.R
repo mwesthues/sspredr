@@ -51,3 +51,29 @@
 #'
 #' @format A matrix with 532 rows and two columns.
 "Pheno"
+
+
+#' Mice pedigree data
+#'
+#' A numerator relationship matrix with pedigree records for 150 mice.
+#'
+#' @format A matrix with 150 rows and 150 columns.
+"mice_ped"
+
+
+#' Mice genomic relationship data
+#'
+#' A genomic relationship matrix with records for 120 mice.
+#'
+#' @format A matrix with 120 rows and 120 columns.
+"mice_snp"
+
+
+#' Mice transcriptomic data
+#'
+#' A matrix with transcriptomic features for 96 mice. The values were calculated
+#' using a multivariate normal distribution where pedigree records in 'mice_ped'
+#' specified the covariance matrix of the mRNA vectors.
+#'
+#' @format A matrix with 96 rows and 400 columns.
+"mice_mrna"

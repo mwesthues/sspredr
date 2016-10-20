@@ -2,9 +2,9 @@
 #'
 #' \code{impute2} returns a list with BGLR model parameters.
 #'
-#' @param x A matrix with pedigree records.
-#' @param y A matrix with SNP records.
-#' @param z A matrix with transcriptomic BLUEs.
+#' @param ped A matrix with pedigree records.
+#' @param snp A matrix with SNP records.
+#' @param mrna A matrix with transcriptomic BLUEs.
 #' @param geno NULL. Optional character vector with names corresponding to one
 #'  of the two parental pools.
 #' @param bglr_model A character specifying the algorithm that shall be used \
@@ -18,6 +18,9 @@
 #'                bglr_model = "BRR")
 #' str(eta)
 #' @importFrom magrittr %>%
+#' @import purrr
+#' @import dplyr
+#' @import tibble
 #' @export
 impute2 <- function(ped, snp, mrna, geno, bglr_model) {
   # Input tests
@@ -37,9 +40,9 @@ impute2 <- function(ped, snp, mrna, geno, bglr_model) {
   nm2 <- category_df[category_df$Category == 2, "G"]
 
   pred_lst <- list(ped = ped, snp = snp, mrna = mrna) %>%
-    map(function(x) x[rownames(x) %in% geno, ]) %>%
-    map_at(.at = "ped",
-           .f = function(x) x[, colnames(x) %in% geno])
+    purrr::map(function(x) x[rownames(x) %in% geno, ]) %>%
+    purrr::map_at(.at = "ped",
+                  .f = function(x) x[, colnames(x) %in% geno])
 
 
   # Z ---------------------------------------------------------------------

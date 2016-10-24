@@ -178,7 +178,8 @@ impute2 <- function(ped, snp, mrna, geno, bglr_model) {
 
   # Output tests ----------------------------------------------------------
   # Make sure that all ETA-entries are sorted correctly.
-  param_lst <- list(X = X_prime, W = W, U0 = U0, U1 = U1) %>%
+  param_lst <- list(X = X_prime, W = W, U0 = U0, U1 = U1)
+  param_lst <- param_lst %>%
     purrr::map(function(x) {
       x[match(geno, rownames(x)), ]
     })
@@ -189,9 +190,10 @@ impute2 <- function(ped, snp, mrna, geno, bglr_model) {
       length()
   )
 
+
   # Return the ETA objects.
-  list(list(X = X_prime, model = "FIXED"),
-       list(X = W, model = bglr_model),
-       list(X = U0, model = bglr_model),
-       list(X = U1, model = bglr_model))
+  list(list(X = param_lst$X, model = "FIXED"),
+       list(X = param_lst$W, model = bglr_model),
+       list(X = param_lst$U0, model = bglr_model),
+       list(X = param_lst$U1, model = bglr_model))
 }

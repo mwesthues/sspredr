@@ -4,12 +4,15 @@
 \alias{impute_eta}
 \title{Imputation of ETA}
 \usage{
-impute_eta(x, y, geno = NULL, bglr_model)
+impute_eta(x, y, as_kernel = TRUE, geno = NULL, bglr_model)
 }
 \arguments{
 \item{x}{A matrix with BLUES of the complete predictor.}
 
 \item{y}{A matrix with BLUEs of the incomplete predictor.}
+
+\item{as_kernel}{logical. Should a feature matrix or a variance covariance
+matrix be returned? Should be 'FALSE' if 'x' denotes pedigree information.}
 
 \item{geno}{NULL. Optional character vector with names corresponding to one
 of the two parental pools.}

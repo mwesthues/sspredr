@@ -6,6 +6,8 @@
 #' @param y A matrix with BLUEs of the incomplete predictor.
 #' @param geno NULL. Optional character vector with names corresponding to one
 #'  of the two parental pools.
+#' @param as_kernel logical. Should a feature matrix or a variance covariance
+#'  matrix be returned? Should be 'FALSE' if 'x' denotes pedigree information.
 #' @param bglr_model A character specifying the algorithm that shall be used \
 #'  when calling \code{BGLR()}.
 #'
@@ -19,7 +21,7 @@
 #' eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
 #' str(eta)
 #' @export
-impute_eta <- function(x, y, geno = NULL, bglr_model) {
+impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   # Input tests
   stopifnot(class(x) == "matrix")
   stopifnot(class(y) == "matrix")
@@ -67,7 +69,11 @@ impute_eta <- function(x, y, geno = NULL, bglr_model) {
   y <- y[nm2, ]
   M2 <- y[, matrixStats::colVars(y) != 0]
   x <- x[, matrixStats::colVars(x) != 0]
-  A <- build_kernel(M = x, lambda = 0.01, algorithm = "RadenII")
+  if (isTRUE(as_kernel)) {
+    A <- build_kernel(M = x, lambda = 0.01, algorithm = "RadenII")
+  } else {
+    A <- t(chol(x))
+  }
   A11 <- A[nm1, nm1]
   A12 <- A[nm1, nm2]
   A21 <- A[nm2, nm1]

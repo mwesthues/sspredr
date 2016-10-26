@@ -72,6 +72,9 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   if (isTRUE(as_kernel)) {
     A <- build_kernel(M = x, lambda = 0.01, algorithm = "RadenII")
   } else {
+    x <- x[match(unique(geno), rownames(x)),
+           match(unique(geno), colnames(x))]
+    diag(x) <- diag(x) + 0.01
     A <- t(chol(x))
   }
   A11 <- A[nm1, nm1]

@@ -91,7 +91,12 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   # Eq.22
   J1 <- A12 %*% solve(A22) %*% J2
   # Eq.10
-  epsilon <- t(chol(solve(Ainv[nm1, nm1])))
+  epsilon <- tryCatch({
+    expr = t(chol(solve(Ainv[nm1, nm1])))
+  },
+    error = t(chol(Matrix::nearPD(solve(Ainv[nm1, nm1]))$mat))
+  ) 
+
   # Eq.20
   W1 <- Z1 %*% M1
   W2 <- Z2 %*% M2

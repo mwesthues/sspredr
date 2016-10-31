@@ -4,7 +4,7 @@
 \alias{complete_eta}
 \title{Construction of ETA with complete predictor data}
 \usage{
-complete_eta(x, geno, as_kernel = FALSE, bglr_model)
+complete_eta(x, geno, as_kernel = FALSE, is_pedigree = FALSE, bglr_model)
 }
 \arguments{
 \item{x}{A matrix with BLUES of the complete predictor.}
@@ -14,6 +14,8 @@ of the two parental pools.}
 
 \item{as_kernel}{logical. Should a feature matrix or a variance covariance
 matrix be returned?}
+
+\item{is_pedigree}{logical. 'TRUE' if the input is a pedigree matrix.}
 
 \item{bglr_model}{A character specifying the algorithm that shall be used \
 when calling \code{BGLR()}.}

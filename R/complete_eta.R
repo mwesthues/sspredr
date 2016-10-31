@@ -7,6 +7,7 @@
 #'  of the two parental pools.
 #' @param as_kernel logical. Should a feature matrix or a variance covariance
 #'  matrix be returned?
+#' @param is_pedigree logical. 'TRUE' if the input is a pedigree matrix.
 #' @param bglr_model A character specifying the algorithm that shall be used \
 #'  when calling \code{BGLR()}.
 #'
@@ -20,7 +21,8 @@
 #' str(eta)
 #' @importFrom magrittr %>%
 #' @export
-complete_eta <- function(x, geno, as_kernel = FALSE, bglr_model) {
+complete_eta <- function(x, geno, as_kernel = FALSE, is_pedigree = FALSE,
+                         bglr_model) {
   # Input tests
   if (class(x) != "matrix") stop("'x' is not a matrix")
   if (class(geno) != "character") stop("'geno' is not a character vector")
@@ -32,7 +34,9 @@ complete_eta <- function(x, geno, as_kernel = FALSE, bglr_model) {
   x <- x[match(comgeno, rownames(x)), ]
   M <- x[, matrixStats::colVars(x) != 0]
 
-  if (isTRUE(as_kernel)) {
+  if (isTRUE(is_pedigree)) {
+    L <- M %>% chol() %>% t()
+  } else if (isTRUE(as_kernel)) {
     G <- build_kernel(M = M)
     L <- G %>% chol() %>% t()
   } else {

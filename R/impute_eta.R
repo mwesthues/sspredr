@@ -74,7 +74,7 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   } else {
     A <- x[match(unique(geno), rownames(x)),
            match(unique(geno), colnames(x))]
-    diag(A) <- diag(x) + 0.01
+    diag(A) <- diag(A) + 0.01
   }
   A11 <- A[nm1, nm1]
   A12 <- A[nm1, nm2]

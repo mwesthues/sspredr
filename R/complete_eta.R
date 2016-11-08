@@ -35,6 +35,8 @@ complete_eta <- function(x, geno, as_kernel = FALSE, is_pedigree = FALSE,
   M <- x[, matrixStats::colVars(x) != 0]
 
   if (isTRUE(is_pedigree)) {
+    M <- M[match(comgeno, rownames(M)), match(comgeno, colnames(M))]
+    diag(M) <- diag(M) + 0.01
     L <- M %>% chol() %>% t()
   } else if (isTRUE(as_kernel)) {
     G <- build_kernel(M = M)

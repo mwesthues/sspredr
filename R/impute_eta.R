@@ -1,3 +1,4 @@
+utils::globalVariables(c("."))
 #' Imputation of ETA
 #'
 #' \code{impute_eta} returns a list with BGLR model parameters.
@@ -20,6 +21,7 @@
 #' y <- mrna[rownames(mrna) %in% geno, ]
 #' eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
 #' str(eta)
+#' @importFrom magrittr %>%
 #' @export
 impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   # Input tests
@@ -68,9 +70,13 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
 
   y <- y[nm2, ]
   M2 <- y[, matrixStats::colVars(y) != 0]
-  x <- x[, matrixStats::colVars(x) != 0]
+  x <- x[match(c(nm1, nm2), rownames(x)),
+         matrixStats::colVars(x) != 0]
+
   if (isTRUE(as_kernel)) {
-    A <- build_kernel(M = x, lambda = 0.01, algorithm = "RadenII")
+    W <- scale(x)
+    A <- tcrossprod(W) / ncol(W)
+    diag(A) <- diag(A) + 0.01
   } else {
     A <- x[match(unique(geno), rownames(x)),
            match(unique(geno), colnames(x))]
@@ -91,15 +97,18 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   # Eq.22
   J1 <- A12 %*% solve(A22) %*% J2
   # Eq.10
-  epsilon <- try(t(chol(solve(Ainv[nm1, nm1]))), silent = TRUE)
-  if (class(epsilon) == "try-error") {
-    epsilon <- t(chol(Matrix::nearPD(solve(Ainv[nm1, nm1]))$mat))
-  }
+  epsilon <- t(chol(solve(A_up11)))
 
   # Eq.20
   W1 <- Z1 %*% M1
   W2 <- Z2 %*% M2
   W <- as.matrix(rbind(W1, W2))
+  if (isTRUE(as_kernel)) {
+    W <- W %>%
+      unique() %>%
+      .[match(c(nm1 ,nm2), rownames(.)), ] %>%
+      build_kernel(M = ., lambda = 0.01, algorithm = "RadenII")
+  }
   W <- W[match(geno, rownames(W)), ]
   U1 <- Z1 %*% epsilon
   U2 <- Z2 %*% matrix(0, nrow = ncol(Z2), ncol = ncol(U1))

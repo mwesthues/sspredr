@@ -39,8 +39,7 @@ complete_eta <- function(x, geno, as_kernel = FALSE, is_pedigree = FALSE,
     diag(M) <- diag(M) + 0.01
     L <- M %>% chol() %>% t()
   } else if (isTRUE(as_kernel)) {
-    G <- build_kernel(M = M)
-    L <- G %>% chol() %>% t()
+    L <- build_kernel(M = M)
   } else {
     L <- M
   }

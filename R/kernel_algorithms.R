@@ -75,5 +75,5 @@ build_kernel <- function(M, lambda = 0.01, algorithm = "RadenII",
   }
   # Add a small number to the diagonal elements to avoid singularity in G.
   diag(G) <- diag(G) + lambda
-  G
+  t(chol(G))
 }

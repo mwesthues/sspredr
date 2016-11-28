@@ -61,11 +61,11 @@
 "mice_ped"
 
 
-#' Mice genomic relationship data
+#' Mice SNP data
 #'
-#' A genomic relationship matrix with records for 120 mice.
+#' A feature matrix with SNP genotypes for 120 mice and 1000 markers.
 #'
-#' @format A matrix with 120 rows and 120 columns.
+#' @format A matrix with 120 rows and 1000 columns.
 "mice_snp"
 
 

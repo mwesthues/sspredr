@@ -5,13 +5,14 @@
 # mRNA vectors.
 # Extract one phenotypic trait from the mice data set.
 data("mice", package = "BGLR")
-set.seed(30943)
-mice_ped <- mice.A[seq_len(150), seq_len(150)]
-mice_snp <- build_kernel(mice.X[seq_len(150), ])
+set.seed(943)
+ped_nms <- sample(rownames(mice.A), size = 120)
+mice_ped <- mice.A[match(ped_nms, rownames(mice.A)), 
+                   match(ped_nms, colnames(mice.A))]
 snp_nms <- sample(rownames(mice_ped), size = nrow(mice_ped) * 0.8,
                   replace = FALSE)
-mice_snp <- mice_snp[match(snp_nms, rownames(mice_snp)),
-                     match(snp_nms, colnames(mice_snp))]
+mice_snp <- mice.X[match(snp_nms, rownames(mice.X)), 
+                   sample(colnames(mice.X), size = 600)]
 mrna_nms <- sample(snp_nms, size = nrow(mice_snp) * 0.8, replace = FALSE)
 mu <- rnorm(n = nrow(mice_ped), mean = 10, sd = 2)
 mice_mrna <- t(MASS::mvrnorm(n = 400, mu = mu, Sigma = mice_ped))

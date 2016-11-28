@@ -96,29 +96,18 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
   A <- pred_lst$ped %>%
     .[match(c(nm0, nm1, nm2), rownames(.)),
       match(c(nm0, nm1, nm2), colnames(.))]
-  diag(A) <- diag(A) + 0.01
   # Numerator relationship matrix.
-  A <- t(chol(A))
+  diag(A) <- diag(A) + 0.01
   Ainv <- solve(A)
 
   # Genomic relationship matrix.
   G <- pred_lst$snp %>%
     .[match(c(nm1, nm2), rownames(.)), ] %>%
     .[, matrixStats::colVars(.) != 0] %>%
-    build_kernel(M = ., lambda = 0.01, algorithm = "RadenII")
+    scale() %>%
+    (function(x) tcrossprod(x) / ncol(x))
+  diag(G) <- diag(G) + 0.01
   Ginv <- solve(G)
-
-  # Mirror elements along the diagonal so that we have non-zero elements in
-  # submatrices where the row index is smaller than the column index.
-  AG_lst <- list(A = A, Ainv = Ainv, G = G, Ginv = Ginv) %>%
-    map(function(x) {
-      x[upper.tri(x, diag = FALSE)] <- t(x)[upper.tri(x, diag = FALSE)]
-      x
-    })
-  A <- AG_lst$A
-  Ainv <- AG_lst$Ainv
-  G <- AG_lst$G
-  Ginv <- AG_lst$Ginv
 
   # Quality check for transcriptomic data.
   M2 <- pred_lst$mrna %>%
@@ -129,12 +118,10 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
     .[match(nm0, rownames(.)), match(nm2, colnames(.))]
 
   A22 <- A[match(nm2, rownames(A)), match(nm2, colnames(A))]
-  A22[upper.tri(A22, diag = FALSE)] <- 0
   M0 <- A02 %*% solve(A22) %*% M2
 
   G12 <- G[match(nm1, rownames(G)), match(nm2, colnames(G))]
   G22 <- G[match(nm2, rownames(G)), match(nm2, colnames(G))]
-  G22[upper.tri(G22, diag = FALSE)] <- 0
   M1 <- G12 %*% solve(G22) %*% M2
 
   J2 <- matrix(-1, nrow = length(nm2), ncol = 1)
@@ -150,13 +137,10 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
     purrr::map(as.matrix) %>%
     do.call(rbind, .)
   if (isTRUE(as_kernel)) {
-    W <- build_kernel(M = unique(W), lambda = 0.01, algorithm = "RadenII")
-    W <- t(chol(W))
-    W <- W[match(geno, rownames(W)), ]
-    if (ncol(W) != length(unique(geno))) {
-      stop("Probably incorrect assembly of submatrices from A after chol()")
-    }
+    W <- W %>% .[match(c(nm0, nm1, nm2), rownames(.)), ] %>%
+      build_kernel(lambda = 0.01, algorithm = "RadenII")
   }
+  W <- W[match(geno, rownames(W)), ]
 
   # X* --------------------------------------------------------------------
   ZJ <- purrr::map2(.x = Z_lst, .y = J_lst, .f = function(x, y) x %*% y) %>%
@@ -165,9 +149,9 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
 
 
   # U0 --------------------------------------------------------------------
-  Ainv00 <- Ainv[nm0, nm0]
-  Ainv00[upper.tri(Ainv00, diag = FALSE)] <- 0
-  epsilon0 <- Ainv00 %>%
+  epsilon0 <- A %>%
+    solve() %>%
+    .[match(nm0, rownames(.)), match(nm0, colnames(.))] %>%
     solve() %>%
     chol() %>%
     t()
@@ -187,9 +171,9 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
 
 
   # U1 --------------------------------------------------------------------
-  Ginv11 <- Ginv[nm1, nm1]
-  Ginv11[upper.tri(Ginv11, diag = FALSE)] <- 0
-  epsilon1 <- Ginv11 %>%
+  epsilon1 <- G %>%
+    solve() %>%
+    .[match(nm1, rownames(.)), match(nm1, colnames(.))] %>%
     solve() %>%
     chol() %>%
     t()

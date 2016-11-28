@@ -4,7 +4,7 @@
 \alias{impute2}
 \title{Imputation of mRNAs via pedigree and genomic information.}
 \usage{
-impute2(ped, snp, mrna, geno, bglr_model)
+impute2(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model)
 }
 \arguments{
 \item{ped}{A matrix with pedigree records.}
@@ -12,6 +12,9 @@ impute2(ped, snp, mrna, geno, bglr_model)
 \item{snp}{A matrix with SNP records.}
 
 \item{mrna}{A matrix with transcriptomic BLUEs.}
+
+\item{as_kernel}{logical. Should a feature matrix or a variance covariance
+matrix be returned? Should be 'FALSE' if 'x' denotes pedigree information.}
 
 \item{geno}{NULL. Optional character vector with names corresponding to one
 of the two parental pools.}

@@ -74,22 +74,22 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
          matrixStats::colVars(x) != 0]
 
   if (isTRUE(as_kernel)) {
-    W <- scale(x)
-    A <- tcrossprod(W) / ncol(W)
+    M <- scale(x)
+    A <- tcrossprod(M) / ncol(M)
     diag(A) <- diag(A) + 0.01
   } else {
     A <- x[match(unique(geno), rownames(x)),
            match(unique(geno), colnames(x))]
     diag(A) <- diag(A) + 0.01
   }
-  A11 <- A[nm1, nm1]
-  A12 <- A[nm1, nm2]
-  A21 <- A[nm2, nm1]
-  A22 <- A[nm2, nm2]
+  A11 <- A[match(nm1, rownames(A)), match(nm1, colnames(A))]
+  A12 <- A[match(nm1, rownames(A)), match(nm2, colnames(A))]
+  A21 <- A[match(nm2, rownames(A)), match(nm1, colnames(A))]
+  A22 <- A[match(nm2, rownames(A)), match(nm2, colnames(A))]
   Ainv <- solve(A)
   dimnames(Ainv) <- dimnames(A)
-  A_up11 <- Ainv[nm1, nm1]
-  A_up12 <- Ainv[nm1, nm2]
+  A_up11 <- Ainv[match(nm1, rownames(Ainv)), match(nm1, colnames(Ainv))]
+  A_up12 <- Ainv[match(nm1, rownames(Ainv)), match(nm2, colnames(Ainv))]
   # Eq.21
   M1 <- A12 %*% solve(A22) %*% M2
   stopifnot(identical(rownames(M1), nm1))
@@ -105,9 +105,8 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   W <- as.matrix(rbind(W1, W2))
   if (isTRUE(as_kernel)) {
     W <- W %>%
-      unique() %>%
-      .[match(c(nm1 ,nm2), rownames(.)), ] %>%
-      build_kernel(M = ., lambda = 0.01, algorithm = "RadenII")
+      .[match(c(nm1, nm2), rownames(.)), ] %>%
+      build_kernel(lambda = 0.01, algorithm = "RadenII")
   }
   W <- W[match(geno, rownames(W)), ]
   U1 <- Z1 %*% epsilon

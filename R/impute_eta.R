@@ -8,7 +8,9 @@ utils::globalVariables(c("."))
 #' @param geno NULL. Optional character vector with names corresponding to one
 #'  of the two parental pools.
 #' @param as_kernel logical. Should a feature matrix or a variance covariance
-#'  matrix be returned? Should be 'FALSE' if 'x' denotes pedigree information.
+#'  matrix be returned?
+#' @param is_pedigree logical. Should be set to 'TRUE' if 'x' is a pedigree
+#'  matrix.
 #' @param bglr_model A character specifying the algorithm that shall be used \
 #'  when calling \code{BGLR()}.
 #'
@@ -19,11 +21,13 @@ utils::globalVariables(c("."))
 #'                FUN.VALUE = character(1))
 #' x <- imp_snps[rownames(imp_snps) %in% geno, ]
 #' y <- mrna[rownames(mrna) %in% geno, ]
-#' eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
+#' eta <- impute_eta(x = x, y = y, as_kernel = TRUE, is_pedigree = FALSE, 
+#'                   geno = geno, bglr_model = "BRR")
 #' str(eta)
 #' @importFrom magrittr %>%
 #' @export
-impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
+impute_eta <- function(x, y, as_kernel = TRUE, is_pedigree = TRUE, geno = NULL,
+                       bglr_model) {
   # Input tests
   stopifnot(class(x) == "matrix")
   stopifnot(class(y) == "matrix")
@@ -73,13 +77,12 @@ impute_eta <- function(x, y, as_kernel = TRUE, geno = NULL, bglr_model) {
   x <- x[match(c(nm1, nm2), rownames(x)),
          matrixStats::colVars(x) != 0]
 
-  if (isTRUE(as_kernel)) {
-    M <- scale(x)
-    A <- tcrossprod(M) / ncol(M)
-    diag(A) <- diag(A) + 0.01
-  } else {
+  if (isTRUE(is_pedigree)) {
     A <- x[match(unique(geno), rownames(x)),
            match(unique(geno), colnames(x))]
+    diag(A) <- diag(A) + 0.01
+  } else {
+    A <- tcrossprod(scale(x)) / ncol(x)
     diag(A) <- diag(A) + 0.01
   }
   A11 <- A[match(nm1, rownames(A)), match(nm1, colnames(A))]

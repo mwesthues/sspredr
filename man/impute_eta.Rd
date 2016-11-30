@@ -4,7 +4,8 @@
 \alias{impute_eta}
 \title{Imputation of ETA}
 \usage{
-impute_eta(x, y, as_kernel = TRUE, geno = NULL, bglr_model)
+impute_eta(x, y, as_kernel = TRUE, is_pedigree = TRUE, geno = NULL,
+  bglr_model)
 }
 \arguments{
 \item{x}{A matrix with BLUES of the complete predictor.}
@@ -12,7 +13,10 @@ impute_eta(x, y, as_kernel = TRUE, geno = NULL, bglr_model)
 \item{y}{A matrix with BLUEs of the incomplete predictor.}
 
 \item{as_kernel}{logical. Should a feature matrix or a variance covariance
-matrix be returned? Should be 'FALSE' if 'x' denotes pedigree information.}
+matrix be returned?}
+
+\item{is_pedigree}{logical. Should be set to 'TRUE' if 'x' is a pedigree
+matrix.}
 
 \item{geno}{NULL. Optional character vector with names corresponding to one
 of the two parental pools.}
@@ -32,7 +36,8 @@ geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
                FUN.VALUE = character(1))
 x <- imp_snps[rownames(imp_snps) \%in\% geno, ]
 y <- mrna[rownames(mrna) \%in\% geno, ]
-eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
+eta <- impute_eta(x = x, y = y, as_kernel = TRUE, is_pedigree = FALSE, 
+                  geno = geno, bglr_model = "BRR")
 str(eta)
 }
 

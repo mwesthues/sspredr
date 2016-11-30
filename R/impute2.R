@@ -114,9 +114,7 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
     .[match(nm2, rownames(.)), ] %>%
     .[, matrixStats::colVars(.) != 0]
 
-  A02 <- A %>%
-    .[match(nm0, rownames(.)), match(nm2, colnames(.))]
-
+  A02 <- A[match(nm0, rownames(A)), match(nm2, colnames(A))]
   A22 <- A[match(nm2, rownames(A)), match(nm2, colnames(A))]
   M0 <- A02 %*% solve(A22) %*% M2
 

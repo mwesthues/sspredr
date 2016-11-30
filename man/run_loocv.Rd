@@ -51,7 +51,8 @@ geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
                FUN.VALUE = character(1))
 x <- imp_snps[rownames(imp_snps) \%in\% geno, ]
 y <- mrna[rownames(mrna) \%in\% geno, ]
-eta <- impute_eta(x = x, y = y, geno = geno, bglr_model = "BRR")
+eta <- impute_eta(x = x, y = y, as_kernel = TRUE, is_pedigree = FALSE,
+                  geno = geno, bglr_model = "BRR")
 eta[] <- lapply(seq_along(eta), FUN = function(i) {
   dat <- eta[[i]]
   x <- dat[["X"]]

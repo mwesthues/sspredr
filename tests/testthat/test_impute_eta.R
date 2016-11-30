@@ -4,7 +4,7 @@ geno <- vapply(strsplit(hybrid_nms, split = "_"), FUN = "[[", 1,
 x <- imp_snps[rownames(imp_snps) %in% geno, ]
 y <- mrna[rownames(mrna) %in% geno, ]
 eta_kernel <- impute_eta(x = x, y = y, geno = geno, as_kernel = TRUE,
-                         bglr_model = "BRR")
+                         is_pedigree = FALSE, bglr_model = "BRR")
 
 context("Content of ETA when imputing only with genomic info")
 test_that("all random and fixed effects are included", {

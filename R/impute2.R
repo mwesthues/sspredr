@@ -173,7 +173,8 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
   param_lst <- list(X = X_prime, W = W, U0 = U0, U1 = U1)
   param_lst <- param_lst %>%
     purrr::map(function(x) {
-      x[match(geno, rownames(x)), ]
+      x <- as.matrix(x)
+      x[match(geno, rownames(x)), , drop = FALSE]
     })
   stopifnot(1 ==
     param_lst %>%

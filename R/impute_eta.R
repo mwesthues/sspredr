@@ -109,6 +109,7 @@ impute_eta <- function(x, y, as_kernel = TRUE, is_pedigree = TRUE, geno = NULL,
   U <- as.matrix(rbind(U1, U2))
   U <- U[match(geno, rownames(U)), ]
   X_prime <- as.matrix(rbind(Z1 %*% J1, Z2 %*% J2))
+  X_prime <- X_prime[match(geno, rownames(X_prime)), , drop = FALSE]
   param_lst <- list(X = X_prime, W = W, U = U)
 
   stopifnot(all(unlist(lapply(param_lst, FUN = function(XWU) {

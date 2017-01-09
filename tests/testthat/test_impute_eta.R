@@ -14,10 +14,3 @@ test_that("all random and fixed effects are included", {
                    expected = c("FIXED", "BRR", "BRR"))
 })
 
-test_that("output dimensions match input", {
-  expect_equal(ncol(eta_kernel[[1]][["X"]]), 2)
-  expect_equal(ncol(eta_kernel[[2]][["X"]]),
-               nrow(x))
-  expect_equal(ncol(eta_kernel[[3]][["X"]]),
-               nrow(x) - nrow(y))
-})

@@ -71,25 +71,6 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
     })
 
 
-  # X ---------------------------------------------------------------------
-  # Design matrix mapping the fixed effect ("has transcriptomic records or
-  # not") to y.
-  # Remove one of the two columns to ensure linear independence.
-  X <- tibble::tibble(G = geno_lst %>% purrr::flatten_chr()) %>%
-    dplyr::left_join(category_tb, by = "G") %>%
-    dplyr::select(Category) %>%
-    as.list() %>%
-    purrr::map(~Matrix::sparse.model.matrix(~-1 + factor(.),
-                                            drop.unused.levels = FALSE)) %>%
-    purrr::map(function(x) {
-      rownames(x) <- geno_lst %>% purrr::flatten_chr()
-      x
-    }) %>%
-    .[[1]] %>%
-    as.matrix() %>%
-    .[, seq_len(2)]
-
-
   # J & M -----------------------------------------------------------------
   # For numerical reasons, add a small number to the diagonal of the pedigree
   # matrix. This allows the Cholesky decomposition to work.
@@ -141,9 +122,8 @@ impute2 <- function(ped, snp, mrna, as_kernel = TRUE, geno, bglr_model) {
   W <- W[match(geno, rownames(W)), ]
 
   # X* --------------------------------------------------------------------
-  ZJ <- purrr::map2(.x = Z_lst, .y = J_lst, .f = function(x, y) x %*% y) %>%
+  X_prime <- purrr::map2(.x = Z_lst, .y = J_lst, .f = function(x, y) x %*% y) %>%
     do.call(rbind, .)
-  X_prime <- cbind(X, ZJ)
 
 
   # U0 --------------------------------------------------------------------

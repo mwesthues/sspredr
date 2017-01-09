@@ -15,13 +15,3 @@ test_that("all random and fixed effects are included", {
                           FUN.VALUE = character(1)),
                    expected = c("FIXED", rep(get("bglr_model"), times = 3)))
 })
-
-test_that("output dimensions match input", {
-  expect_equal(nrow(mice_ped),
-               eta %>%
-                 map("X") %>%
-                 map(nrow) %>%
-                 reduce(intersect)
-               )
-  expect_equal(ncol(eta[[1]][["X"]]), 3)
-})

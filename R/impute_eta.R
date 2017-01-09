@@ -64,14 +64,6 @@ impute_eta <- function(x, y, as_kernel = TRUE, is_pedigree = TRUE, geno = NULL,
   Z2 <- Z2[, match(nm2, colnames(Z2))]
   rownames(Z2) <- geno2
 
-  # Design matrix mapping the fixed effect ("has transcriptomic records or
-  # not") to y.
-  geno_fct <- as.factor(as.character(ifelse(geno %in% geno1, yes = 1, no = 0)))
-  X <- Matrix::sparse.model.matrix(~-1 + geno_fct, drop.unused.levels = FALSE)
-  # Remove one of the two columns because to ensure linear independence.
-  X <- X[, 1, drop = FALSE]
-  rownames(X) <- geno
-
   y <- y[nm2, ]
   M2 <- y[, matrixStats::colVars(y) != 0]
   x <- x[match(c(nm1, nm2), rownames(x)),
@@ -116,7 +108,7 @@ impute_eta <- function(x, y, as_kernel = TRUE, is_pedigree = TRUE, geno = NULL,
   U2 <- Z2 %*% matrix(0, nrow = ncol(Z2), ncol = ncol(U1))
   U <- as.matrix(rbind(U1, U2))
   U <- U[match(geno, rownames(U)), ]
-  X_prime <- as.matrix(cbind(X, rbind(Z1 %*% J1, Z2 %*% J2)))
+  X_prime <- as.matrix(rbind(Z1 %*% J1, Z2 %*% J2))
   param_lst <- list(X = X_prime, W = W, U = U)
 
   stopifnot(all(unlist(lapply(param_lst, FUN = function(XWU) {

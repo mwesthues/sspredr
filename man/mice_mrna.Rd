@@ -14,4 +14,3 @@ using a multivariate normal distribution where pedigree records in 'mice_ped'
 specified the covariance matrix of the mRNA vectors.
 }
 \keyword{datasets}
-

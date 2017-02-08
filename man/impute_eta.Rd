@@ -40,4 +40,3 @@ eta <- impute_eta(x = x, y = y, as_kernel = TRUE, is_pedigree = FALSE,
                   geno = geno, bglr_model = "BRR")
 str(eta)
 }
-

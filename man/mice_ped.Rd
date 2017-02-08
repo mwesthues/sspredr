@@ -12,4 +12,3 @@ mice_ped
 A numerator relationship matrix with pedigree records for 150 mice.
 }
 \keyword{datasets}
-

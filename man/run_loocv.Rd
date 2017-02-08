@@ -67,4 +67,3 @@ run_loocv(Pheno = Pheno, ETA = eta, hybrid = TRUE, father_idx = 2,
           out_loc = "./bglr_out/")
 unlink("./bglr_out", recursive = TRUE)
 }
-

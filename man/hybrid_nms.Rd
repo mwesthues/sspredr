@@ -14,4 +14,3 @@ A vector containing the names of hybrids. It can be used for sampling a
 cross-validation scheme.
 }
 \keyword{datasets}
-

@@ -12,4 +12,3 @@ Pheno
 A matrix containing the agronomic data for 532 hybrids and two traits.
 }
 \keyword{datasets}
-

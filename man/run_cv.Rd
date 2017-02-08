@@ -78,4 +78,3 @@ run_cv(Pheno = Pheno, ETA = eta, cv = cv, father_idx = 2, mother_idx = 1,
        out_loc = "./bglr_out/")
 unlink("./bglr_out", recursive = TRUE)
 }
-

@@ -14,4 +14,3 @@ A dataset containing the genotypes of ten individuals for ten loci. The
 variables are as follows:
 }
 \keyword{datasets}
-

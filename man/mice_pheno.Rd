@@ -12,4 +12,3 @@ mice_pheno
 A data frame with obesity records for 150 mice taken from the 'BGLR' package.
 }
 \keyword{datasets}
-

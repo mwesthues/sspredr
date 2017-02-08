@@ -12,4 +12,3 @@ mice_snp
 A feature matrix with SNP genotypes for 120 mice and 1000 markers.
 }
 \keyword{datasets}
-

@@ -44,4 +44,3 @@ cv_mat <- sample_cv(hybrid_nms, n_mother = 39, n_father = 33,
                     hybrid_split = "_")
 str(cv_mat)
 }
-

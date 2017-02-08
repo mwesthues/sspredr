@@ -37,4 +37,3 @@ If \code{output} is "markerNames" a character vector with marker
  # Return the heterozygosity at each locus.
  compute_het(imp_snps, output = "markerHeterozygosity", hetThresh = 0)
 }
-

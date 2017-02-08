@@ -57,4 +57,3 @@ If \code{algorithm} is \code{RadenII} and \code{feat_weights} is set
  zhang <- build_kernel(mice.snp, algorithm = "Zhang")
  all.equal(radenII, zhang)
 }
-

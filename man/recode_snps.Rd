@@ -42,4 +42,3 @@ A matrix with the same dimensions as \code{x} but with recoded SNP
              major_coding = 2, minor_coding = 0, het_coding = 1,
              na_coding = NA_real_)
 }
-

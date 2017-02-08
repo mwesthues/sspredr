@@ -13,4 +13,3 @@ A matrix containing the gene expression values for 44 genotypes and 500
 mRNAs.
 }
 \keyword{datasets}
-

@@ -34,4 +34,3 @@ x <- imp_snps[rownames(imp_snps) \%in\% geno, ]
 eta <- complete_eta(x = x, geno = geno, bglr_model = "BRR")
 str(eta)
 }
-

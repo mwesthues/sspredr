@@ -35,4 +35,3 @@ eta <- impute2(ped = mice_ped, snp = mice_snp, mrna = mice_mrna, geno = geno,
                bglr_model = "BRR")
 str(eta)
 }
-

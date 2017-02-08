@@ -38,4 +38,3 @@ If \code{output} is "markerNames" a character vector with marker
  compute_cf(marker_numeric, output = "markerNames", missing = NA_real_,
             callThresh = 0.9)
 }
-

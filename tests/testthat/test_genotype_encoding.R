@@ -1,11 +1,12 @@
-char_geno_lst <- compute_maf(marker_character, output = "genoList")
-char_major <- char_geno_lst[["major_allele"]]
-char_minor <- char_geno_lst[["minor_allele"]]
+char_geno_lst <- compute_maf(marker_character, output = "geno_list",
+                             missing = "??", maf_threshold = 0)
+char_major <- char_geno_lst[["major"]]
+char_minor <- char_geno_lst[["minor"]]
 
-num_geno_lst <- compute_maf(marker_numeric, output = "genoList",
-                            missing = NA_real_)
-num_major <- num_geno_lst[["major_allele"]]
-num_minor <- num_geno_lst[["minor_allele"]]
+num_geno_lst <- compute_maf(marker_numeric, output = "geno_list",
+                            missing = NA_real_, maf_threshold = 0)
+num_major <- num_geno_lst[["major"]]
+num_minor <- num_geno_lst[["minor"]]
 
 
 
@@ -52,16 +53,6 @@ test_that("class of ouptput equal to class of encoding", {
 })
 
 context("Recode output")
-test_that("more SNPs than genotypes used", {
-   expect_error(recode_snps(marker_character[, 1:6],
-                            major = char_major,
-                            minor = char_minor,
-                            major_coding = 2, minor_coding = 0, het_coding = 1,
-                            na_coding = NA_real_),
-               regexp = "non-conformable arrays",
-               info = "Less SNP-columns than genotype-rows")
-})
-
 test_that("output has correct class", {
   expect_is(recode_snps(marker_character,
                        major = char_major,

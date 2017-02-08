@@ -4,7 +4,7 @@ test_that("missing values allowed", {
   x_dim <- prod(dim(x))
   x_na <- sample(x_dim, size = 5, replace = FALSE)
   x[x_na] <- NA_real_
-  expect_is(compute_het(x, output = "markerHeterozygosity"),
+  expect_is(compute_het(x, output = "marker_heterozygosity"),
             "numeric")
 })
 
@@ -13,15 +13,15 @@ test_that("heterozygosity exists", {
               nrow = 10, ncol = 20,
               dimnames = list(paste0("geno", seq_len(10)),
                               paste0("snp", seq_len(20))))
-  expect_error(compute_het(x, output = "markerNames"))
+  expect_error(compute_het(x, output = "marker_names"))
 })
 
 
 context("Heterozygosity output")
 test_that("output has correct class", {
-  expect_is(compute_het(imp_snps, output = "markerNames"),
+  expect_is(compute_het(imp_snps, output = "marker_names"),
             class = "character")
-  expect_is(compute_het(imp_snps, output = "markerHeterozygosity"),
+  expect_is(compute_het(imp_snps, output = "marker_heterozygosity"),
             class = "numeric")
 })
 

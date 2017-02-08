@@ -8,23 +8,23 @@
 #' @param hetThresh Numeric or complex vector specifying the heterozygosity
 #'  threshold.
 #' @param na_coding Scalar providing the encoding of missing elements.
-#' @return If \code{output} is "markerNames" a character vector with marker
+#' @return If \code{output} is "marker_names" a character vector with marker
 #'  names that have passed the quality check will be returned. If \code{output}
-#'  is "markerHeterozygosity" a numeric vector with the heterozygosity at each
+#'  is "marker_heterozygosity" a numeric vector with the heterozygosity at each
 #'  marker locus will be returned.
 #' @examples
 #'  # Load a matrix with SNP genotypes encoded as numeric values
 #'  data(imp_snps)
 #'
 #'  # Return the names of all markers with a heterozygosity of less than 10%.
-#'  compute_het(imp_snps, output = "markerNames", hetThresh = 0.1)
+#'  compute_het(imp_snps, output = "marker_names", het_threshold = 0.1)
 #'
 #'  # Return the heterozygosity at each locus.
-#'  compute_het(imp_snps, output = "markerHeterozygosity", hetThresh = 0)
+#'  compute_het(imp_snps, output = "marker_heterozygosity", het_threshold = 0)
 #' @export
 ### Remove markers with high heterozygosity levels.
-compute_het <- function(x, output = c("markerNames", "markerHeterozygosity"),
-                        hetThresh = 0, na_coding = "??") {
+compute_het <- function(x, output = c("marker_names", "marker_heterozygosity"),
+                        het_threshold = 0, na_coding = "??") {
 
   # Recode missing values that are actually encoded as 'NA' to avoid conflicts.
   if (anyNA(x)) {
@@ -68,6 +68,6 @@ compute_het <- function(x, output = c("markerNames", "markerHeterozygosity"),
   x[x != "1"] <- "0"
   snp_het <- colSums(x == "1", na.rm = TRUE) / nrow(x)
   switch(EXPR = output,
-         markerHeterozygosity = snp_het,
-         markerNames = colnames(x[, snp_het <= hetThresh]))
+         marker_heterozygosity = snp_het,
+         marker_names = colnames(x[, snp_het <= het_threshold]))
 }

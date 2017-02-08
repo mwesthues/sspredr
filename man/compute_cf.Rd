@@ -4,8 +4,8 @@
 \alias{compute_cf}
 \title{Call Frequency}
 \usage{
-compute_cf(x, output = c("markerNames", "markerCallfreq"), missing = "??",
-  callThresh = NULL)
+compute_cf(x, output = c("marker_names", "marker_callfreq"),
+  missing_value = "??", call_threshold = NULL)
 }
 \arguments{
 \item{x}{A matrix. Genotype names are stored in rows whereas marker names
@@ -19,9 +19,9 @@ are stored in columns.}
 threshold.}
 }
 \value{
-If \code{output} is "markerNames" a character vector with marker
+If \code{output} is "marker_names" a character vector with marker
  names that have passed the quality check will be returned. If \code{output}
- is "markerCallfreq" a numeric vector with the call frequency at each
+ is "marker_callfreq" a numeric vector with the call frequency at each
  marker locus will be returned.
 }
 \description{
@@ -32,9 +32,10 @@ If \code{output} is "markerNames" a character vector with marker
  data(marker_numeric)
 
  # Compute the call frequency
- compute_cf(marker_numeric, output = "markerCallfreq", missing = NA_real_)
+ compute_cf(marker_numeric, output = "marker_callfreq",
+            missing_value = NA_real_)
 
  # Retrieve the marker names of all loci with a call frequency >= 0.9.
- compute_cf(marker_numeric, output = "markerNames", missing = NA_real_,
-            callThresh = 0.9)
+ compute_cf(marker_numeric, output = "marker_names",
+            missing_value = NA_real_, call_threshold = 0.9)
 }

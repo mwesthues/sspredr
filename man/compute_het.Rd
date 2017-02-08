@@ -4,8 +4,8 @@
 \alias{compute_het}
 \title{Heterozygosity}
 \usage{
-compute_het(x, output = c("markerNames", "markerHeterozygosity"),
-  hetThresh = 0, na_coding = "??")
+compute_het(x, output = c("marker_names", "marker_heterozygosity"),
+  het_threshold = 0, na_coding = "??")
 }
 \arguments{
 \item{x}{A matrix. Genotype names are stored in rows whereas marker names
@@ -13,15 +13,15 @@ are stored in columns. No missing values are allowed.}
 
 \item{output}{Character vector with output options.}
 
+\item{na_coding}{Scalar providing the encoding of missing elements.}
+
 \item{hetThresh}{Numeric or complex vector specifying the heterozygosity
 threshold.}
-
-\item{na_coding}{Scalar providing the encoding of missing elements.}
 }
 \value{
-If \code{output} is "markerNames" a character vector with marker
+If \code{output} is "marker_names" a character vector with marker
  names that have passed the quality check will be returned. If \code{output}
- is "markerHeterozygosity" a numeric vector with the heterozygosity at each
+ is "marker_heterozygosity" a numeric vector with the heterozygosity at each
  marker locus will be returned.
 }
 \description{
@@ -32,8 +32,8 @@ If \code{output} is "markerNames" a character vector with marker
  data(imp_snps)
 
  # Return the names of all markers with a heterozygosity of less than 10\%.
- compute_het(imp_snps, output = "markerNames", hetThresh = 0.1)
+ compute_het(imp_snps, output = "marker_names", het_threshold = 0.1)
 
  # Return the heterozygosity at each locus.
- compute_het(imp_snps, output = "markerHeterozygosity", hetThresh = 0)
+ compute_het(imp_snps, output = "marker_heterozygosity", het_threshold = 0)
 }

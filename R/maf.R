@@ -9,43 +9,51 @@
 #' @param maf_threshold Numeric or complex vector specifying the minor allele
 #'  frequency threshold.
 #' @return If \code{output} is "marker_names" a character vector with marker
-#'  names that have passed the quality check will be returned. If \code{output}
-#'  is "marker_maf" a numeric vector with the minor allele frequency at each
-#'  marker locus will be returned. If \code{output} is "recoded" a matrix with
-#'  the original dimensions will be returned where the most frequent genotype at
-#'  each locus will be encoded as the highest value and the least frequent
-#'  genotype will be encoded as the smalles value in \code{x}.
+#'  names that have passed the quality check will be returned.
+#'  If \code{output} is "marker_maf" a numeric vector with the minor allele
+#'  frequency at each marker locus will be returned.
+#'  If \code{output} is "recoded" a matrix with the original dimensions will
+#'  be returned where the most frequent genotype at each locus will be encoded
+#'  as the highest value and the least frequent genotype will be encoded as
+#'  the smalles value in \code{x}.
+#'  If \code{output} is "geno_list" a list with encoding for the major and
+#'  the minor genotype at each locus will be returned.
 #' @examples
 #'  # Load a matrix with SNP genotypes encoded as numeric values
 #'  data(marker_numeric)
 #'
 #'  # Return the names of all polymorphic markers.
-#'  compute_maf(marker_numeric, output = "marker_names", missing = NA_real_,
-#'              mafThresh = 0)
+#'  compute_maf(marker_numeric, output = "marker_names",
+#'              missing_value = NA_real_, maf_threshold = 0)
 #'
 #'  # Set one locus to monomorphic
 #'  marker_mono <- marker_numeric
 #'  marker_mono[, 1] <- 1
-#'  compute_maf(marker_numeric, output = "marker_names", missing = NA_real_,
-#'              mafThresh = 0)
+#'  compute_maf(marker_numeric, output = "marker_names",
+#'              missing_value = NA_real_, maf_threshold = 0)
 #'
 #'  # Load a matrix with SNP genotypes encoded as character values
 #'  data(marker_character)
 #'
 #'  # Return the minor allele frequency at each locus with MAF >= 0.05.
-#'  compute_maf(marker_character, output = "marker_maf", missing = "??",
-#'              mafThresh = 0.05)
+#'  compute_maf(marker_character, output = "marker_maf",
+#'              missing_value = "??",
+#'              maf_threshold = 0.05)
 #'
 #'  # Return the genotype of the major as well as of the minor allele at each
 #'  # locus.
-#'  compute_maf(marker_character, output = "recoded", missing = "??",
-#'              mafThresh = 0)
+#'  compute_maf(marker_character, output = "recoded", missing_value = "??",
+#'              maf_threshold = 0)
+#'
+#'  # Return the minor and major genotype at each locus.
+#'  compute_maf(marker_character, output = "geno_list", missing_value = "??",
+#'              maf_threshold = 0)
 #' @export
 compute_maf <- function(
   x,
-  output = c("marker_names", "marker_maf", "recoded"),
-  missing,
-  maf_threshold) {
+  output = c("marker_names", "marker_maf", "recoded", "geno_list"),
+  missing_value = NA_character_,
+  maf_threshold = 0) {
 
 
   # Store the original type of the input so that results for the
@@ -57,14 +65,11 @@ compute_maf <- function(
     stop("Input has to be of class 'matrix'")
   }
 
-  if (typeof(missing) != typeof(x)) {
-    stop("Types of 'missing' and 'x' must be the same.")
+  if (typeof(missing_value) != typeof(x)) {
+    stop("Types of 'missing_value' and 'x' must be the same.")
   }
 
-  if (any(colMeans(is.na(x)) > 0.1)) {
-  warning("Some markers have more than 10% missing values")
-  }
-
+  x[x == missing_value] <- NA
   unique_elements <- sort(na.exclude(unique(c(x))))
 
   # Checks that are specific to numeric input matrices.
@@ -72,7 +77,7 @@ compute_maf <- function(
     # Get the unique numeric elements in order to check whether the encoding of
     # genotypes with respect to homozygous (recessive and dominant) and
     # heterozygous genotypes makes sense.
-    unique_elements <- sort(na.exclude(unique(c(x))))
+    storage.mode(unique_elements) <- "integer"
     if (length(unique_elements) > 3) {
       stop("Only recessive, dominant and heterozygous genotypes are allowed.")
     }
@@ -107,7 +112,6 @@ compute_maf <- function(
 
   if(typeof(x) == "character") {
     # For each locus, check whether there are no more than two alleles.
-    x[x == missing] <- NA_character_
     if (length(unique_elements) > 3) {
       stop("Only recessive, dominant and heterozygous genotypes are allowed.")
     }
@@ -125,10 +129,16 @@ compute_maf <- function(
   }
 
 
+  # Determine the encoding of the major genotype at each locus.
   recoding_vector <- rep(min_value, times = ncol(x))
   recoding_vector[n_maj >= n_min] <- max_value
-  storage.mode(recoding_vector) <- "character"
   storage.mode(x) <- "character"
+  original_major_geno <- recoding_vector
+  original_minor_geno <- ifelse(original_major_geno == min_value,
+                                yes = max_value, no = min_value)
+  geno_list <- list(major = original_major_geno,
+                    minor = original_minor_geno)
+  storage.mode(recoding_vector) <- "character"
 
   # For each locus, determine whether the assumed major genotype is actually
   # the most frequent one. If this is not the case (if) recode the genotypes
@@ -173,5 +183,6 @@ compute_maf <- function(
   switch(output,
          marker_names = colnames(x[, p_min >= maf_threshold]),
          marker_maf = list(major = p_maj, minor = p_min),
-         recoded = recoded_x)
+         recoded = recoded_x,
+         geno_list = geno_list)
 }

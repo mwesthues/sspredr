@@ -14,10 +14,10 @@
 #'  genotypes.
 #' @examples
 #'  # First, determine the major and minor allele at each locus of SNP-genotypes
-#'  geno_lst <- compute_maf(marker_character, output = "genoList",
-#'                          missing = "??", mafThresh = 0)
-#'  major <- geno_lst[["major_allele"]]
-#'  minor <- geno_lst[["minor_allele"]]
+#'  geno_lst <- compute_maf(marker_character, output = "geno_list",
+#'                          missing = "??", maf_threshold = 0)
+#'  major <- geno_lst[["major"]]
+#'  minor <- geno_lst[["minor"]]
 #'
 #'  # Recode the major allele as '2', the minor allele as '0' and heterozygotes
 #'  # as '0'.

@@ -3,11 +3,11 @@ test_that("arguments play nice", {
   expect_error(compute_maf(marker_numeric, output = "marker_names",
                            missing = "??",
                            maf_threshold = 0),
-               regexp = "Types of 'missing' and 'x' must be the same")
+               regexp = "Types of 'missing_value' and 'x' must be the same")
   expect_error(compute_maf(marker_character, output = "marker_names",
                            missing = NA_real_,
                            maf_threshold = 0),
-             regexp = "Types of 'missing' and 'x' must be the same")
+             regexp = "Types of 'missing_value' and 'x' must be the same")
 })
 
 

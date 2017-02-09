@@ -13,9 +13,9 @@ are stored in columns.}
 
 \item{output}{Character vector with output options.}
 
-\item{missing}{Character vector providing the encoding of missing elements.}
+\item{missing_value}{Character vector providing the encoding of missing elements.}
 
-\item{callThresh}{Numeric or complex vector specifying the call frequency
+\item{call_threshold}{Numeric or complex vector specifying the call frequency
 threshold.}
 }
 \value{

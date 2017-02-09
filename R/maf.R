@@ -5,7 +5,7 @@
 #' @param x A matrix. Genotype names are stored in rows whereas marker names
 #'  are stored in columns.
 #' @param output Character vector with output options.
-#' @param missing Character vector providing the encoding of missing elements.
+#' @param missing_value Character vector providing the encoding of missing elements.
 #' @param maf_threshold Numeric or complex vector specifying the minor allele
 #'  frequency threshold.
 #' @return If \code{output} is "marker_names" a character vector with marker
@@ -70,7 +70,7 @@ compute_maf <- function(
   }
 
   x[x == missing_value] <- NA
-  unique_elements <- sort(na.exclude(unique(c(x))))
+  unique_elements <- sort(stats::na.exclude(unique(c(x))))
 
   # Checks that are specific to numeric input matrices.
   if (typeof(x) %in% c("double", "integer")) {

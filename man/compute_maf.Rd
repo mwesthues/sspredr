@@ -13,10 +13,10 @@ are stored in columns.}
 
 \item{output}{Character vector with output options.}
 
+\item{missing_value}{Character vector providing the encoding of missing elements.}
+
 \item{maf_threshold}{Numeric or complex vector specifying the minor allele
 frequency threshold.}
-
-\item{missing}{Character vector providing the encoding of missing elements.}
 }
 \value{
 If \code{output} is "marker_names" a character vector with marker

@@ -13,10 +13,10 @@ are stored in columns. No missing values are allowed.}
 
 \item{output}{Character vector with output options.}
 
-\item{na_coding}{Scalar providing the encoding of missing elements.}
-
-\item{hetThresh}{Numeric or complex vector specifying the heterozygosity
+\item{het_threshold}{Numeric or complex vector specifying the heterozygosity
 threshold.}
+
+\item{na_coding}{Scalar providing the encoding of missing elements.}
 }
 \value{
 If \code{output} is "marker_names" a character vector with marker

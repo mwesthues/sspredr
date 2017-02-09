@@ -5,7 +5,7 @@
 #' @param x A matrix. Genotype names are stored in rows whereas marker names
 #'  are stored in columns. No missing values are allowed.
 #' @param output Character vector with output options.
-#' @param hetThresh Numeric or complex vector specifying the heterozygosity
+#' @param het_threshold Numeric or complex vector specifying the heterozygosity
 #'  threshold.
 #' @param na_coding Scalar providing the encoding of missing elements.
 #' @return If \code{output} is "marker_names" a character vector with marker

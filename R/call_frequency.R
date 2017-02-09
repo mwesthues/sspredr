@@ -5,8 +5,8 @@
 #' @param x A matrix. Genotype names are stored in rows whereas marker names
 #'  are stored in columns.
 #' @param output Character vector with output options.
-#' @param missing Character vector providing the encoding of missing elements.
-#' @param callThresh Numeric or complex vector specifying the call frequency
+#' @param missing_value Character vector providing the encoding of missing elements.
+#' @param call_threshold Numeric or complex vector specifying the call frequency
 #'  threshold.
 #' @return If \code{output} is "marker_names" a character vector with marker
 #'  names that have passed the quality check will be returned. If \code{output}

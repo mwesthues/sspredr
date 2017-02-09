@@ -39,7 +39,7 @@ replace_na_with_major_genotype <- function(dat, missing_value, major_genotype) {
   no_na_snp <- dat %>%
     ncol() %>%
     seq_len() %>%
-    map(function(i) {
+    lapply(function(i) {
       x <- dat[, i]
       if (anyNA(x)) {
         x[is.na(x)] <- major_genotype[i]

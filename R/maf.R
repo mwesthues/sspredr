@@ -114,31 +114,30 @@ compute_maf <- function(
     het_count_mat <- count_mat[!hom_alleles, , drop = FALSE]
   }
 
+  if (length(unique_elements) == 2) {
+    hom_count_mat <- count_mat
+  } else if (length(unique_elements == 3)) {
+    el1 <- unique_elements[1]
+    el2 <- unique_elements[2]
+    el3 <- unique_elements[3]
+    if (x_type %in% c("double", "integer")) {
+      hom_mean <- mean(c(el1, el3))
+      stopifnot(hom_mean == el2)
+    }
+    het_count_mat <- count_mat[rownames(count_mat) == el2, , drop = FALSE]
+    hom_count_mat <- count_mat[rownames(count_mat) != el2, , drop = FALSE]
+  }
   # With the previously assembled objects for the determination of the type of
   # the genotype (major, minor, het), determine their frequencies and
   # also return the matches.
   allele_type_lst <- lapply(seq_len(ncol(count_mat)), FUN = function(i) {
     locus <- stats::na.exclude(x[, i])
-    if (length(unique_elements) == 2) {
-      hom_count_mat <- count_mat
-    } else if (length(unique_elements == 3)) {
-      el1 <- unique_elements[1]
-      el2 <- unique_elements[2]
-      el3 <- unique_elements[3]
-      if (x_type %in% c("double", "integer")) {
-        hom_mean <- mean(c(el1, el3))
-        stopifnot(hom_mean == el2)
-      }
-      het_count_mat <- count_mat[rownames(count_mat) == el2, , drop = FALSE]
-      hom_count_mat <- count_mat[rownames(count_mat) != el2, , drop = FALSE]
-    }
     major <- names(which.max(hom_count_mat[, i]))
     non_zero_hom <- hom_count_mat[, i] != 0
     minor <- names(which.min(hom_count_mat[non_zero_hom, i]))
     putative_het <- rownames(het_count_mat)
     het <- putative_het[het_count_mat[, i] != 0]
     n_het <- sum(locus == het)
-
     n_major <- sum(locus == major)
     n_minor <- sum(locus == minor)
     # Number of genotypes, which are not missing.

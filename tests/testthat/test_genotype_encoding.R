@@ -1,12 +1,12 @@
 char_geno_lst <- compute_maf(marker_character, output = "geno_list",
                              missing = "??", maf_threshold = 0)
-char_major <- char_geno_lst[["major"]]
-char_minor <- char_geno_lst[["minor"]]
+char_major <- char_geno_lst[["major_genotype"]]
+char_minor <- char_geno_lst[["minor_genotype"]]
 
 num_geno_lst <- compute_maf(marker_numeric, output = "geno_list",
                             missing = NA_real_, maf_threshold = 0)
-num_major <- num_geno_lst[["major"]]
-num_minor <- num_geno_lst[["minor"]]
+num_major <- num_geno_lst[["major_genotype"]]
+num_minor <- num_geno_lst[["minor_genotype"]]
 
 
 

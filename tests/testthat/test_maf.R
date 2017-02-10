@@ -4,10 +4,6 @@ test_that("arguments play nice", {
                            missing = "??",
                            maf_threshold = 0),
                regexp = "Types of 'missing_value' and 'x' must be the same")
-  expect_error(compute_maf(marker_character, output = "marker_names",
-                           missing = NA_real_,
-                           maf_threshold = 0),
-             regexp = "Types of 'missing_value' and 'x' must be the same")
 })
 
 
@@ -30,12 +26,6 @@ dummy_output <- matrix(
   ncol = 3
 )
 
-test_that("Major alles are defined correctly", {
-  expect_equal(compute_maf(dummy_input, output = "recoded",
-                           missing = NA_real_,
-                           maf_threshold = 0),
-               dummy_output)
-})
 
 context("MAF output")
 test_that("output structure is correct", {

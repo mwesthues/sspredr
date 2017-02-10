@@ -23,10 +23,6 @@ If \code{output} is "marker_names" a character vector with marker
  names that have passed the quality check will be returned.
  If \code{output} is "marker_maf" a numeric vector with the minor allele
  frequency at each marker locus will be returned.
- If \code{output} is "recoded" a matrix with the original dimensions will
- be returned where the most frequent genotype at each locus will be encoded
- as the highest value and the least frequent genotype will be encoded as
- the smalles value in \code{x}.
  If \code{output} is "geno_list" a list with encoding for the major and
  the minor genotype at each locus will be returned.
 }
@@ -55,12 +51,17 @@ If \code{output} is "marker_names" a character vector with marker
              missing_value = "??",
              maf_threshold = 0.05)
 
- # Return the genotype of the major as well as of the minor allele at each
- # locus.
- compute_maf(marker_character, output = "recoded", missing_value = "??",
-             maf_threshold = 0)
-
  # Return the minor and major genotype at each locus.
  compute_maf(marker_character, output = "geno_list", missing_value = "??",
              maf_threshold = 0)
+
+# Examine a case where there more than three genotypes.
+multiple_genotypes <- matrix(c(
+ "AA", "AA", "AT", "TT",
+ "CC", "CG", "GG", "GG",
+ "TT", "NN", "TT", "AA",
+ "CC", "CC", "CC", "CC"
+), ncol = 4, dimnames = list(NULL, paste0("col", seq_len(4))))
+compute_maf(multiple_genotypes, output = "marker_names",
+            missing_value = "??", maf_threshold = 0)
 }

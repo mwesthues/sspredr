@@ -85,7 +85,7 @@ ensure_snp_quality <- function(snp, callfreq_check = TRUE,
       sspredr::compute_maf(
       output = "geno_list", missing = missing_value, maf_threshold = 0
       ) %>%
-      .[["major"]]
+      .[["major_genotype"]]
       snp <- replace_na_with_major_genotype(snp, missing_value = missing_value,
                                             major_genotype = major_genotype)
   }

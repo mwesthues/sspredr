@@ -12,10 +12,6 @@
 #'  names that have passed the quality check will be returned.
 #'  If \code{output} is "marker_maf" a numeric vector with the minor allele
 #'  frequency at each marker locus will be returned.
-#'  If \code{output} is "recoded" a matrix with the original dimensions will
-#'  be returned where the most frequent genotype at each locus will be encoded
-#'  as the highest value and the least frequent genotype will be encoded as
-#'  the smalles value in \code{x}.
 #'  If \code{output} is "geno_list" a list with encoding for the major and
 #'  the minor genotype at each locus will be returned.
 #' @examples
@@ -40,21 +36,25 @@
 #'              missing_value = "??",
 #'              maf_threshold = 0.05)
 #'
-#'  # Return the genotype of the major as well as of the minor allele at each
-#'  # locus.
-#'  compute_maf(marker_character, output = "recoded", missing_value = "??",
-#'              maf_threshold = 0)
-#'
 #'  # Return the minor and major genotype at each locus.
 #'  compute_maf(marker_character, output = "geno_list", missing_value = "??",
 #'              maf_threshold = 0)
+#'
+#' # Examine a case where there more than three genotypes.
+#' multiple_genotypes <- matrix(c(
+#'  "AA", "AA", "AT", "TT",
+#'  "CC", "CG", "GG", "GG",
+#'  "TT", "NN", "TT", "AA",
+#'  "CC", "CC", "CC", "CC"
+#' ), ncol = 4, dimnames = list(NULL, paste0("col", seq_len(4))))
+#' compute_maf(multiple_genotypes, output = "marker_names",
+#'             missing_value = "??", maf_threshold = 0)
 #' @export
 compute_maf <- function(
   x,
   output = c("marker_names", "marker_maf", "recoded", "geno_list"),
   missing_value = NA_character_,
   maf_threshold = 0) {
-
 
   # Store the original type of the input so that results for the
   # 'output'-option 'recoded' can be converted back to the original type.
@@ -65,124 +65,126 @@ compute_maf <- function(
     stop("Input has to be of class 'matrix'")
   }
 
-  if (typeof(missing_value) != typeof(x)) {
+  if (typeof(missing_value) != typeof(x) && !is.na(missing_value)) {
     stop("Types of 'missing_value' and 'x' must be the same.")
   }
 
-  x[x == missing_value] <- NA
+  # Recode missing values as 'NA' so that they can easily be excluded by using
+  # R-specific functions.
+  if (!is.na(missing_value)) {
+    x[x == missing_value] <- NA
+  }
+
+  # Extract all unique genotpyes that are present in the data. This is necessary
+  # for computationally efficient counting of elements at each locus.
   unique_elements <- sort(stats::na.exclude(unique(c(x))))
 
-  # Checks that are specific to numeric input matrices.
-  if (typeof(x) %in% c("double", "integer")) {
-    # Get the unique numeric elements in order to check whether the encoding of
-    # genotypes with respect to homozygous (recessive and dominant) and
-    # heterozygous genotypes makes sense.
-    storage.mode(unique_elements) <- "integer"
-    if (length(unique_elements) > 3) {
-      stop("Only recessive, dominant and heterozygous genotypes are allowed.")
-    }
-    if (length(unique_elements) < 2) {
-      stop("Only one unique genotype present")
-    }
-    if (length(unique_elements) == 3) {
-      if (!unique_elements[2] == mean(c(unique_elements[1], unique_elements[3]))) {
-        stop("Heterozygous value must be the mean of the homozygous values")
-      }
-    }
-  }
-
-
-  # It is assumed that the minor genotype in 'x' is encoded with a lower value
-  # than the major genotype and that the heterozygous genotype is encoded as
-  # the arithmetic mean of the two values.
-  if (length(unique_elements) == 3) {
-    min_value <- unique_elements[1]
-    het_value <- unique_elements[2]
-    max_value <- unique_elements[3]
-    n_het <- colSums(x == het_value, na.rm = TRUE)
-  } else {
-    min_value <- unique_elements[1]
-    max_value <- unique_elements[2]
-  }
-
-  # Count the occurrences of each genotype to determine the minor allele
-  # frequency at each locus.
-  n_min <- colSums(x == min_value, na.rm = TRUE)
-  n_maj <- colSums(x == max_value, na.rm = TRUE)
-
-  if(typeof(x) == "character") {
-    # For each locus, check whether there are no more than two alleles.
-    if (length(unique_elements) > 3) {
-      stop("Only recessive, dominant and heterozygous genotypes are allowed.")
-    }
-    if (length(unique_elements) < 2) {
-      stop("Only one unique genotype present")
-    }
-    if (length(unique_elements) == 3) {
-      dom_allele <- purrr::flatten_chr(strsplit(max_value, split = ""))[1]
-      rec_allele <- purrr::flatten_chr(strsplit(min_value, split = ""))[1]
-      split_het_value <- purrr::flatten_chr(strsplit(het_value, split = ""))
-      if (!dom_allele %in% split_het_value || !rec_allele %in% split_het_value) {
-        stop("Heterozygotes must be encoded by the unique letters of homozygotes")
-      }
-    }
-  }
-
-
-  # Determine the encoding of the major genotype at each locus.
-  recoding_vector <- rep(min_value, times = ncol(x))
-  recoding_vector[n_maj >= n_min] <- max_value
-  storage.mode(x) <- "character"
-  original_major_geno <- recoding_vector
-  original_minor_geno <- ifelse(original_major_geno == min_value,
-                                yes = max_value, no = min_value)
-  geno_list <- list(major = original_major_geno,
-                    minor = original_minor_geno)
-  storage.mode(recoding_vector) <- "character"
-
-  # For each locus, determine whether the assumed major genotype is actually
-  # the most frequent one. If this is not the case (if) recode the genotypes
-  # to match the expected values in 'unique_elements', otherwise (else) leave
-  # them as before.
-  recoded_x <- lapply(seq_len(ncol(x)), FUN = function(i) {
-    x_col <- x[, i]
-    actual_major <- recoding_vector[i]
-    if (actual_major != as.character(max_value)) {
-      x_col[x_col == actual_major] <- "major"
-      x_col[x_col == max_value] <- "minor"
-    } else {
-      x_col[x_col == min_value] <- "minor"
-      x_col[x_col == max_value] <- "major"
-    }
-    x_col
+  # Count the number of occurences of each possible genotype at any locus. Store
+  # the results in a matrix with number of rows equal to the number of unique
+  # genotypes and number of columns equal to the number of loci.
+  count_lst <- lapply(unique_elements, FUN = function(y) {
+    colSums(x == y, na.rm = TRUE)
   })
-  recoded_x <- matrix(unlist(recoded_x), ncol = ncol(x), byrow = FALSE)
-  recoded_x[recoded_x == "minor"] <- min_value
-  recoded_x[recoded_x == "major"] <- max_value
-  if (x_type %in% c("double", "integer")) {
-    storage.mode(recoded_x) <- "integer"
+  names(count_lst) <- unique_elements
+  count_mat <- do.call(rbind, count_lst)
+  colnames(count_mat) <- colnames(x)
+
+  # Remove all monomorphic loci. First, they are uninformative and will only
+  # increase noise in the models. Second, this practice makes it easier to
+  # determine the minor genotype at each locus by looking for the smallest value
+  # that is non-zero. Otherwise, the algorithm would always pick a genotype from
+  # 'count_mat' that does not even exist at this particular locus.
+  polymorphic_loci <- vapply(seq_len(ncol(count_mat)), FUN = function(i) {
+    sum(count_mat[, i] != 0) != 1
+  }, FUN.VALUE = logical(1))
+  count_mat <- count_mat[, polymorphic_loci]
+
+
+  # Determine the hom genotypes at each locus. Likewise, determine the
+  # het genotypes at each locus. Without this separation there would
+  # likely be cases where the frequency of het genotypes is higher than
+  # the frequency of the minor genotype. This would exacerbate an efficient
+  # determination of the minor genotype.
+  if (isTRUE(x_type == "character")) {
+    hom_alleles <- vapply(strsplit(rownames(count_mat), split = ""),
+                                 FUN = function(x) {
+      x[1] == x[2]
+    }, FUN.VALUE = logical(1))
+    hom_count_mat <- count_mat[hom_alleles, , drop = FALSE]
+    het_count_mat <- count_mat[!hom_alleles, , drop = FALSE]
   }
 
-  # Count the occurrences of each genotype to determine the minor allele
-  # frequency at each locus.
-  n_min <- colSums(recoded_x == min_value, na.rm = TRUE)
-  n_maj <- colSums(recoded_x == max_value, na.rm = TRUE)
-  if (length(unique_elements) == 3) {
-    n_het <- colSums(recoded_x == het_value, na.rm = TRUE)
-  } else {
-    n_het <- 0
-  }
-  # Number of genotypes, which are not missing.
-  n_geno <- n_maj + n_min + n_het
-  # Frequency of the major allele at any locus.
-  p_maj <- ((2 * n_maj) + n_het) / (2 * n_geno)
-  # Frequency of the minor allele at any locus.
-  p_min <- 1 - p_maj
+  # With the previously assembled objects for the determination of the type of
+  # the genotype (major, minor, het), determine their frequencies and
+  # also return the matches.
+  allele_type_lst <- lapply(seq_len(ncol(count_mat)), FUN = function(i) {
+    locus <- stats::na.exclude(x[, i])
+    if (length(unique_elements) == 2) {
+      hom_count_mat <- count_mat
+    } else if (length(unique_elements == 3)) {
+      el1 <- unique_elements[1]
+      el2 <- unique_elements[2]
+      el3 <- unique_elements[3]
+      if (x_type %in% c("double", "integer")) {
+        hom_mean <- mean(c(el1, el3))
+        stopifnot(hom_mean == el2)
+      }
+      het_count_mat <- count_mat[rownames(count_mat) == el2, , drop = FALSE]
+      hom_count_mat <- count_mat[rownames(count_mat) != el2, , drop = FALSE]
+    }
+    major <- names(which.max(hom_count_mat[, i]))
+    non_zero_hom <- hom_count_mat[, i] != 0
+    minor <- names(which.min(hom_count_mat[non_zero_hom, i]))
+    putative_het <- rownames(het_count_mat)
+    het <- putative_het[het_count_mat[, i] != 0]
+    n_het <- sum(locus == het)
+
+    n_major <- sum(locus == major)
+    n_minor <- sum(locus == minor)
+    # Number of genotypes, which are not missing.
+    n_geno <- n_major + n_het + n_minor
+    # Frequency of the major allele at any locus.
+    p_major <- ((2 * n_major) + n_het) / (2 * n_geno)
+    # Frequency of the minor allele at any locus.
+    p_minor <- 1 - p_major
+
+    if (isTRUE(length(het) == 0)) het <- NA
+
+    list(major_genotype = major,
+         het_genotype = het,
+         minor_genotype = minor,
+         major_frequency = p_major,
+         minor_frequency = p_minor)
+  })
+  names(allele_type_lst) <- colnames(count_mat)
+
+  # Transform the results so that each component (major_genotype, het_genotype,
+  # minor_genotype, major_frequency, minor_frequency) is returned as a separate
+  # vector that can be easily extracted subsequently.
+  transposed_lst <- purrr::transpose(allele_type_lst)
+  res_lst <- lapply(transposed_lst, FUN = unlist)
+
+  # Names of marker loci, which passed the minor allele frequency threshold.
+  marker_names <- res_lst %>%
+    .["minor_frequency"] %>%
+    purrr::flatten_dbl() %>%
+    purrr::keep(. >= maf_threshold) %>%
+    names()
+
+  # Return the names of the major and minor genotypes at each locus.
+  geno_list <- res_lst %>%
+    purrr::keep(names(.) %in% c("major_genotype", "minor_genotype"))
+  geno_list[] <- lapply(geno_list, FUN = function(x) {
+    storage.mode(x) <- x_type
+    x
+  })
+
+  marker_maf <- res_lst %>%
+    purrr::keep(names(.) %in% c("major_frequency", "minor_frequency"))
 
   output <- match.arg(output)
   switch(output,
-         marker_names = colnames(x[, p_min >= maf_threshold]),
-         marker_maf = list(major = p_maj, minor = p_min),
-         recoded = recoded_x,
+         marker_names = marker_names,
+         marker_maf = marker_maf,
          geno_list = geno_list)
 }

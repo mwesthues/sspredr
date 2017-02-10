@@ -5,7 +5,7 @@ data("marker_numeric")
 context("Replacement of missing values with major genotype")
 geno_list <- sspredr::compute_maf(marker_numeric, output = "geno_list",
                                   missing_value = NA_real_, maf_threshold = 0)
-major_genotypes <- geno_list$major
+major_genotypes <- geno_list$major_genotype
 n_geno <- nrow(marker_numeric)
 expected_major_geno_count <- vapply(seq_len(ncol(marker_numeric)),
                                     FUN = function(i) {

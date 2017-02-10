@@ -33,8 +33,8 @@ A matrix with the same dimensions as \code{x} but with recoded SNP
  # First, determine the major and minor allele at each locus of SNP-genotypes
  geno_lst <- compute_maf(marker_character, output = "geno_list",
                          missing = "??", maf_threshold = 0)
- major <- geno_lst[["major"]]
- minor <- geno_lst[["minor"]]
+ major <- geno_lst[["major_genotype"]]
+ minor <- geno_lst[["minor_genotype"]]
 
  # Recode the major allele as '2', the minor allele as '0' and heterozygotes
  # as '0'.

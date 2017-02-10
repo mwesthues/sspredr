@@ -16,7 +16,7 @@
 #'  # Compute the major genotype at each locus.
 #'  major_genotype <- sspredr::compute_maf(marker_numeric, output = "geno_list",
 #'                                         missing = NA_real_,
-#'                                         maf_threshold = 0)[["major"]]
+#'                                         maf_threshold = 0)[["major_genotype"]]
 #'
 #'  # Replace all missing genotypes with the major allele.
 #'  replace_na_with_major_genotype(marker_numeric, missing_value = NA_real_,

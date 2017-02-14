@@ -43,5 +43,5 @@ A matrix with the same dimensions as \code{x} but with recoded SNP
  # as '0'.
  recode_snps(marker_character, major = major, minor = minor,
              major_coding = 2, minor_coding = 0, het_coding = 1,
-             missing_value = NA_character, na_coding = NA_real_)
+             missing_value = "??", na_coding = NA_real_)
 }

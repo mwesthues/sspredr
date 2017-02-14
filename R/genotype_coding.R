@@ -24,7 +24,7 @@
 #'  # as '0'.
 #'  recode_snps(marker_character, major = major, minor = minor,
 #'              major_coding = 2, minor_coding = 0, het_coding = 1,
-#'              missing_value = NA_character, na_coding = NA_real_)
+#'              missing_value = "??", na_coding = NA_real_)
 #' @export
 recode_snps <- function(x, major, minor, major_coding, minor_coding,
                         het_coding, missing_value, na_coding) {

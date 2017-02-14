@@ -137,6 +137,13 @@ compute_maf <- function(
     major <- names(which.max(hom_count_mat[, i]))
     non_zero_hom <- hom_count_mat[, i] != 0
     minor <- names(which.min(hom_count_mat[non_zero_hom, i]))
+    # In some cases, the frequency of the major and the minor allele are
+    # identical and the same genotype would be declared to be the major and the
+    # minor genotype, which is nonsensical. In such cases of ambiguity, declare
+    # the second genotype as the minor genotype.
+    minor <- ifelse(identical(major, minor),
+                    yes = names(non_zero_hom)[2],
+                    no = minor)
     putative_het <- rownames(het_count_mat)
     het <- putative_het[het_count_mat[, i] != 0]
     n_het <- sum(locus == het)

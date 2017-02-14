@@ -47,3 +47,11 @@ test_that("Length of major and minor genotypes are the same", {
   expect_identical(length(maf_geno_length$major_genotype),
                    length(maf_geno_length$minor_genotype))
 })
+
+test_that("Major and minor genotypes are unique", {
+  geno_list <- compute_maf(marker_character,
+                           output = "geno_list",
+                           missing = "??",
+                           maf_threshold = 0.9)
+  expect_false(any(geno_list$major_genotype == geno_list$minor_genotype))
+})

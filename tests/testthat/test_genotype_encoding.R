@@ -91,3 +91,21 @@ test_that("conversion of genotypes succeeded", {
                                 na_coding = NA_character_)) %in%
                     c("AA", "BB", "AB", NA_character_)))
 })
+
+dummy_input <- matrix(
+  c(
+    2, 0, 0, 0, 2,
+    0, NA_real_, 2, 2, 2,
+    0, 0, 0, 2, 0
+  ),
+  ncol = 3
+)
+
+dummy_output <- matrix(
+  c(
+    0, 2, 2, 2, 0,
+    0, NA_real_, 2, 2, 2,
+    2, 2, 2, 0, 2
+  ),
+  ncol = 3
+)

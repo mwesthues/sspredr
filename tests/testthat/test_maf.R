@@ -7,25 +7,6 @@ test_that("arguments play nice", {
 })
 
 
-context("MAF recoding")
-dummy_input <- matrix(
-  c(
-    2, 0, 0, 0, 2,
-    0, NA_real_, 2, 2, 2,
-    0, 0, 0, 2, 0
-  ),
-  ncol = 3
-)
-
-dummy_output <- matrix(
-  c(
-    0, 2, 2, 2, 0,
-    0, NA_real_, 2, 2, 2,
-    2, 2, 2, 0, 2
-  ),
-  ncol = 3
-)
-
 context("MAF output")
 test_that("output structure is correct", {
   expect_length(compute_maf(marker_numeric, output = "marker_names",

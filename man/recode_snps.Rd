@@ -4,7 +4,8 @@
 \alias{recode_snps}
 \title{Recode genotypic data}
 \usage{
-recode_snps(x, major, minor, major_coding, minor_coding, het_coding, na_coding)
+recode_snps(x, major, minor, major_coding, minor_coding, het_coding,
+  missing_value, na_coding)
 }
 \arguments{
 \item{x}{A matrix. Genotype names are stored in rows whereas marker names
@@ -20,6 +21,8 @@ are stored in columns.}
 
 \item{het_coding}{Scalar specifying how to recode heterozygous loci.}
 
+\item{missing_value}{Scalar specifying how missing values are encoded in \code{x}.}
+
 \item{na_coding}{Scalar specifying how to recode missing values.}
 }
 \value{
@@ -32,7 +35,7 @@ A matrix with the same dimensions as \code{x} but with recoded SNP
 \examples{
  # First, determine the major and minor allele at each locus of SNP-genotypes
  geno_lst <- compute_maf(marker_character, output = "geno_list",
-                         missing = "??", maf_threshold = 0)
+                         missing_value = "??", maf_threshold = 0)
  major <- geno_lst[["major_genotype"]]
  minor <- geno_lst[["minor_genotype"]]
 
@@ -40,5 +43,5 @@ A matrix with the same dimensions as \code{x} but with recoded SNP
  # as '0'.
  recode_snps(marker_character, major = major, minor = minor,
              major_coding = 2, minor_coding = 0, het_coding = 1,
-             na_coding = NA_real_)
+             missing_value = NA_character, na_coding = NA_real_)
 }

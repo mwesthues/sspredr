@@ -9,13 +9,14 @@
 #' @param major_coding Scalar specifying how to recode the major genotype.
 #' @param minor_coding Scalar specifying how to recode the minor genotype.
 #' @param het_coding Scalar specifying how to recode heterozygous loci.
+#' @param missing_value Scalar specifying how missing values are encoded in \code{x}.
 #' @param na_coding Scalar specifying how to recode missing values.
 #' @return A matrix with the same dimensions as \code{x} but with recoded SNP
 #'  genotypes.
 #' @examples
 #'  # First, determine the major and minor allele at each locus of SNP-genotypes
 #'  geno_lst <- compute_maf(marker_character, output = "geno_list",
-#'                          missing = "??", maf_threshold = 0)
+#'                          missing_value = "??", maf_threshold = 0)
 #'  major <- geno_lst[["major_genotype"]]
 #'  minor <- geno_lst[["minor_genotype"]]
 #'
@@ -23,10 +24,10 @@
 #'  # as '0'.
 #'  recode_snps(marker_character, major = major, minor = minor,
 #'              major_coding = 2, minor_coding = 0, het_coding = 1,
-#'              na_coding = NA_real_)
+#'              missing_value = NA_character, na_coding = NA_real_)
 #' @export
 recode_snps <- function(x, major, minor, major_coding, minor_coding,
-                        het_coding, na_coding) {
+                        het_coding, missing_value, na_coding) {
   if (class(x) != "matrix") {
     stop("'x' is not a matrix")
   }
@@ -57,11 +58,16 @@ recode_snps <- function(x, major, minor, major_coding, minor_coding,
     }
   }
 
+
   major_mat <- matrix(major, nrow = 1)
   minor_mat <- matrix(minor, nrow = 1)
   x[x == major_mat[rep(1, nrow(x)), ]] <- major_coding
   x[x == minor_mat[rep(1, nrow(x)), ]] <- minor_coding
-  x[x == "??"] <- na_coding
+  if (is.na(missing_value)) {
+    x[is.na(x)] <- na_coding
+  } else {
+    x[x == missing_value] <- na_coding
+  }
   x[!x %in% c(get("major_coding"),
               get("minor_coding"), get("na_coding"))] <- het_coding
   storage.mode(x) <- class_encoding

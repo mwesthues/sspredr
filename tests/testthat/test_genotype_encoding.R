@@ -40,6 +40,7 @@ test_that("class of ouptput equal to class of encoding", {
                           major_coding = 1,
                           minor_coding = 0,
                           het_coding = 0.5,
+                          missing_value = "??",
                           na_coding = NA_real_)),
             class = "numeric")
   expect_is(c(recode_snps(marker_numeric,
@@ -48,6 +49,7 @@ test_that("class of ouptput equal to class of encoding", {
                           major_coding = "AA",
                           minor_coding = "BB",
                           het_coding = "AB",
+                          missing_value = "??",
                           na_coding = NA_character_)),
             class = "character")
 })
@@ -60,6 +62,7 @@ test_that("output has correct class", {
                        major_coding = 1,
                        minor_coding = 0,
                        het_coding = 0.5,
+                       missing_value = "??",
                        na_coding = NA_real_),
             class = "matrix")
 })
@@ -71,6 +74,7 @@ test_that("output has same dimensions as input", {
                                    major_coding = 1,
                                    minor_coding = 0,
                                    het_coding = 0.5,
+                                   missing_value = "??",
                                    na_coding = NA_real_)),
                    expected = dim(marker_character))
 })
@@ -83,11 +87,7 @@ test_that("conversion of genotypes succeeded", {
                                 major_coding = "AA",
                                 minor_coding = "BB",
                                 het_coding = "AB",
+                                missing_value = NA_real_,
                                 na_coding = NA_character_)) %in%
                     c("AA", "BB", "AB", NA_character_)))
 })
-
-
-
-
-

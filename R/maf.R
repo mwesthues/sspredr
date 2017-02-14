@@ -48,7 +48,7 @@
 #'  "CC", "CC", "CC", "CC"
 #' ), ncol = 4, dimnames = list(NULL, paste0("col", seq_len(4))))
 #' compute_maf(multiple_genotypes, output = "marker_names",
-#'             missing_value = "??", maf_threshold = 0)
+#'             missing_value = "NN", maf_threshold = 0)
 #' @export
 compute_maf <- function(
   x,
@@ -95,7 +95,9 @@ compute_maf <- function(
   # that is non-zero. Otherwise, the algorithm would always pick a genotype from
   # 'count_mat' that does not even exist at this particular locus.
   polymorphic_loci <- vapply(seq_len(ncol(count_mat)), FUN = function(i) {
-    sum(count_mat[, i] != 0) != 1
+    non_zero_count <- sum(count_mat[, i] != 0)
+    non_zero_count > 1 && non_zero_count != 0
+    sum(count_mat[, i] != 0) > 1 && sum(count_mat[, i])
   }, FUN.VALUE = logical(1))
   count_mat <- count_mat[, polymorphic_loci]
 
@@ -116,7 +118,7 @@ compute_maf <- function(
 
   if (length(unique_elements) == 2) {
     hom_count_mat <- count_mat
-  } else if (length(unique_elements == 3)) {
+  } else if (length(unique_elements) == 3) {
     el1 <- unique_elements[1]
     el2 <- unique_elements[2]
     el3 <- unique_elements[3]

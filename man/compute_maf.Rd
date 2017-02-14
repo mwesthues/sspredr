@@ -63,5 +63,5 @@ multiple_genotypes <- matrix(c(
  "CC", "CC", "CC", "CC"
 ), ncol = 4, dimnames = list(NULL, paste0("col", seq_len(4))))
 compute_maf(multiple_genotypes, output = "marker_names",
-            missing_value = "??", maf_threshold = 0)
+            missing_value = "NN", maf_threshold = 0)
 }

@@ -26,7 +26,6 @@ dummy_output <- matrix(
   ncol = 3
 )
 
-
 context("MAF output")
 test_that("output structure is correct", {
   expect_length(compute_maf(marker_numeric, output = "marker_names",
@@ -35,3 +34,16 @@ test_that("output structure is correct", {
                 n = ncol(marker_numeric))
 })
 
+test_that("Length of major and minor genotypes are the same", {
+  multiple_genotypes <- matrix(c(
+   "AA", "AA", "AT", "TT",
+   "CC", "CG", "GG", "GG",
+   "TT", "NN", "TT", "AA",
+   "CC", "CC", "CC", "CC"
+  ), ncol = 4, dimnames = list(NULL, paste0("col", seq_len(4))))
+  maf_geno_length <- compute_maf(multiple_genotypes, output = "geno_list",
+                                 missing = "NN",
+                                 maf_threshold = 0)
+  expect_identical(length(maf_geno_length$major_genotype),
+                   length(maf_geno_length$minor_genotype))
+})

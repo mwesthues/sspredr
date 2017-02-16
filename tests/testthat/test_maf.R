@@ -36,3 +36,14 @@ test_that("Major and minor genotypes are unique", {
                            maf_threshold = 0.9)
   expect_false(any(geno_list$major_genotype == geno_list$minor_genotype))
 })
+
+
+test_that("Input without heterozygous genotypes is accepted", {
+  homozygous <- matrix(sample(c(0, 1), size = 100, replace = TRUE),
+                       nrow = 10, ncol = 10)
+  colnames(homozygous) <- paste0("col", seq_len(10))
+  expect_silent(compute_maf(homozygous,
+                            output = "marker_names",
+                            missing = NA_real_,
+                            maf_threshold = 0))
+})

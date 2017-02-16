@@ -102,8 +102,8 @@ compute_maf <- function(
   count_mat <- count_mat[, polymorphic_loci]
 
 
-  # Determine the hom genotypes at each locus. Likewise, determine the
-  # het genotypes at each locus. Without this separation there would
+  # Determine the homozygous genotypes at each locus. Likewise, determine the
+  # heterozygous genotypes at each locus. Without this separation there would
   # likely be cases where the frequency of het genotypes is higher than
   # the frequency of the minor genotype. This would exacerbate an efficient
   # determination of the minor genotype.
@@ -129,6 +129,16 @@ compute_maf <- function(
     het_count_mat <- count_mat[rownames(count_mat) == el2, , drop = FALSE]
     hom_count_mat <- count_mat[rownames(count_mat) != el2, , drop = FALSE]
   }
+
+  # If the input matrix 'x' does not contain any heterozygous genotypes, create
+  # this placeholder matrix for heterozygous genotypes for subsequent code to
+  # work efficiently.
+  if (!exists("het_count_mat")) {
+    het_count_mat <- matrix(0, nrow = 1, ncol = ncol(x))
+    rownames(het_count_mat) <- 999
+    storage.mode(het_count_mat) <- x_type
+  }
+
   # With the previously assembled objects for the determination of the type of
   # the genotype (major, minor, het), determine their frequencies and
   # also return the matches.

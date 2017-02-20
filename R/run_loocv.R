@@ -92,13 +92,15 @@ run_loocv <- function(Pheno, ETA, hybrid = TRUE,
                      mother_idx,
                      FUN.VALUE = character(1))
     # Use only T0 hybrids for the training set.
-    tst <- intersect(grep(mother[run], x = geno, invert = TRUE),
+    trn <- intersect(grep(mother[run], x = geno, invert = TRUE),
                      grep(father[run], x = geno, invert = TRUE))
+	  y <- Pheno[, trait]
+	  y[-trn] <- NA_real_
   } else {
     tst <- grep(geno[run], x = geno)
+    y <- Pheno[, trait]
+    y[tst] <- NA_real_
   }
-	y <- Pheno[, trait]
-	y[-tst] <- NA_real_
 
   if (isTRUE(speed_tst)) {
     systime <- system.time(replicate(10, BGLR::BGLR(y = y,

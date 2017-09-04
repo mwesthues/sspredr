@@ -46,6 +46,54 @@ loci_het_rate <- imp_snps %>%
 ```
 
 
+## Genotype encoding
+Depending on the technology for calling SNP reads and depending on the data
+format that you're using for storing SNP data you will have entries in your
+SNP matrix that are either coded as strings, numeric values or integer values.
+The function `recode_snps` can translate between the string- and the
+number-representation while taking into account which value encodes a major or
+a minor allele at any locus.
+
+First determine the major and minor allele at each locus of SNP-genotypes.
+We set the argument 'maf_threshold' to zero because at this point we do not
+want to apply a quality check for minor allele frequency.
+
+```{r genotype-encoding-compute-maf}
+data("marker_character")
+
+# Check the original data format.
+typeof(marker_character)
+print(marker_character[, 1:5])
+
+geno_lst <- compute_maf(
+  marker_character,
+  output = "geno_list",
+  missing_value = "??",
+  maf_threshold = 0
+  )
+```
+
+Next, we want to recode the major allele as `2`, the minor allele as `0` and
+heterozygotes as `1`.
+
+```{r genotype-encoding}
+marker_numeric <- sspredr::recode_snps(
+  marker_character,
+  major = geno_lst[["major_genotype"]],
+  minor = geno_lst[["minor_genotype"]],
+  major_coding = 2,
+  minor_coding = 0,
+  het_coding = 1,
+  missing_value = "??",
+  na_coding = NA_real_
+  )
+
+# Check the new data format.
+typeof(marker_numeric)
+print(marker_numeric[, 1:5])
+```
+
+
 ## Missing values
 In many cases your 'raw' SNP data will contain missing values.
 Since throwing them away would be a considerable waste of your resources you
@@ -93,12 +141,20 @@ imp_numeric %>%
 ## SNP quality filtering
 In any genomic prediction it is crucial to filter SNPs based on the criteria
 call frequency, minor allele frequency and heteroyzgosity rate.
+
+```{r snp-heterozygosity}
+
+```
+
+
+
+
 Moreover, particular in the case of small samples of genotypes, the set of SNPs
 may be characterized by identical marker loci.
 Let's load a set of marker data and recreate such a scenario by creating a
 duplicate of a marker locus and appending it to the marker matrix.
 
-```{r snp-quality}
+```{r duplicated-snps}
 data("marker_numeric")
 snp <- marker_numeric
 

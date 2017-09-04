@@ -68,6 +68,100 @@ loci_het_rate <- imp_snps %>%
 ```
 
 
+## Genotype encoding
+Depending on the technology for calling SNP reads and depending on the data
+format that you're using for storing SNP data you will have entries in your
+SNP matrix that are either coded as strings, numeric values or integer values.
+The function `recode_snps` can translate between the string- and the
+number-representation while taking into account which value encodes a major or
+a minor allele at any locus.
+
+First determine the major and minor allele at each locus of SNP-genotypes.
+We set the argument 'maf_threshold' to zero because at this point we do not
+want to apply a quality check for minor allele frequency.
+
+
+```r
+data("marker_character")
+
+# Check the original data format.
+typeof(marker_character)
+```
+
+```
+## [1] "character"
+```
+
+```r
+print(marker_character[, 1:5])
+```
+
+```
+##       col1 col2 col3 col4 col5
+## row1  "BB" "BB" "??" "BB" "AA"
+## row2  "BB" "BB" "AA" "BB" "BB"
+## row3  "AA" "AA" "BB" "BB" "BB"
+## row4  "??" "AB" "AA" "AB" "BB"
+## row5  "BB" "BB" "AA" "AA" "BB"
+## row6  "AA" "BB" "AA" "??" "AA"
+## row7  "AA" "AA" "BB" "BB" "BB"
+## row8  "BB" "AA" "??" "??" "AA"
+## row9  "AA" "AA" "BB" "AB" "BB"
+## row10 "AA" "BB" "BB" "BB" "AA"
+```
+
+```r
+geno_lst <- compute_maf(
+  marker_character,
+  output = "geno_list",
+  missing_value = "??",
+  maf_threshold = 0
+  )
+```
+
+Next, we want to recode the major allele as `2`, the minor allele as `0` and
+heterozygotes as `1`.
+
+
+```r
+marker_numeric <- sspredr::recode_snps(
+  marker_character,
+  major = geno_lst[["major_genotype"]],
+  minor = geno_lst[["minor_genotype"]],
+  major_coding = 2,
+  minor_coding = 0,
+  het_coding = 1,
+  missing_value = "??",
+  na_coding = NA_real_
+  )
+
+# Check the new data format.
+typeof(marker_numeric)
+```
+
+```
+## [1] "double"
+```
+
+```r
+print(marker_numeric[, 1:5])
+```
+
+```
+##       col1 col2 col3 col4 col5
+## row1     0    2   NA    2    0
+## row2     0    2    2    2    2
+## row3     2    0    0    2    2
+## row4    NA    1    2    1    2
+## row5     0    2    2    0    2
+## row6     2    2    2   NA    0
+## row7     2    0    0    2    2
+## row8     0    0   NA   NA    0
+## row9     2    0    0    1    2
+## row10    2    2    0    2    0
+```
+
+
 ## Missing values
 In many cases your 'raw' SNP data will contain missing values.
 Since throwing them away would be a considerable waste of your resources you
@@ -159,6 +253,12 @@ imp_numeric %>%
 ## SNP quality filtering
 In any genomic prediction it is crucial to filter SNPs based on the criteria
 call frequency, minor allele frequency and heteroyzgosity rate.
+
+
+
+
+
+
 Moreover, particular in the case of small samples of genotypes, the set of SNPs
 may be characterized by identical marker loci.
 Let's load a set of marker data and recreate such a scenario by creating a

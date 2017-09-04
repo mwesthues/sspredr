@@ -1,18 +1,19 @@
 ---
-title: "Single Step Prediction"
+title: "Single Step Data Conversion and SNP Filtering"
 author: "Matthias Westhues"
-date: "2017-09-04"
+date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Single Step Prediction}
+  %\VignetteIndexEntry{Single Step Data Conversion and SNP Filtering}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 
-The main functionality of `sspred` entails:
+The main functionality of `sspredr` entails:
 
 1.   Convert between digit- and string-representations of SNPs.
 2.   Check for SNP heterozygosity, minor allele frequency and call frequency.
@@ -33,59 +34,20 @@ First determine the major and minor allele at each locus of SNP-genotypes.
 We set the argument 'maf_threshold' to zero because at this point we do not
 want to apply a quality check for minor allele frequency.
 
-
-```r
+```{r load-packages}
 library("sspredr")
 library("dplyr")
 ```
 
-```
-## 
-## Attaching package: 'dplyr'
-```
 
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
 
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
+```{r genotype-encoding-compute-maf}
 data("marker_character")
 
 # Check the original data format.
 typeof(marker_character)
-```
-
-```
-## [1] "character"
-```
-
-```r
 print(marker_character[, 1:5])
-```
 
-```
-##       col1 col2 col3 col4 col5
-## row1  "BB" "BB" "??" "BB" "AA"
-## row2  "BB" "BB" "AA" "BB" "BB"
-## row3  "AA" "AA" "BB" "BB" "BB"
-## row4  "??" "AB" "AA" "AB" "BB"
-## row5  "BB" "BB" "AA" "AA" "BB"
-## row6  "AA" "BB" "AA" "??" "AA"
-## row7  "AA" "AA" "BB" "BB" "BB"
-## row8  "BB" "AA" "??" "??" "AA"
-## row9  "AA" "AA" "BB" "AB" "BB"
-## row10 "AA" "BB" "BB" "BB" "AA"
-```
-
-```r
 geno_lst <- compute_maf(
   marker_character,
   output = "geno_list",
@@ -97,8 +59,7 @@ geno_lst <- compute_maf(
 Next, we want to recode the major allele as `2`, the minor allele as `0` and
 heterozygotes as `1`.
 
-
-```r
+```{r genotype-encoding}
 marker_numeric <- sspredr::recode_snps(
   marker_character,
   major = geno_lst[["major_genotype"]],
@@ -112,28 +73,7 @@ marker_numeric <- sspredr::recode_snps(
 
 # Check the new data format.
 typeof(marker_numeric)
-```
-
-```
-## [1] "double"
-```
-
-```r
 print(marker_numeric[, 1:5])
-```
-
-```
-##       col1 col2 col3 col4 col5
-## row1     0    2   NA    2    0
-## row2     0    2    2    2    2
-## row3     2    0    0    2    2
-## row4    NA    1    2    1    2
-## row5     0    2    2    0    2
-## row6     2    2    2   NA    0
-## row7     2    0    0    2    2
-## row8     0    0   NA   NA    0
-## row9     2    0    0    1    2
-## row10    2    2    0    2    0
 ```
 
 
@@ -146,39 +86,15 @@ I recommend to use an imputation software such as
 purpose, but here I've also provided a simple function which imputes missing
 values with the major allele at any locus:
 
-
-```r
+```{r missing-value-imputation}
 data("marker_numeric")
 
 # Examine the data.
 print(marker_numeric)
-```
-
-```
-##       col1 col2 col3 col4 col5 col6 col7 col8 col9 col10
-## row1     2    2   NA    2    0    2    0    0    0    NA
-## row2     2    2    0    2    2    1    2    0    2     2
-## row3     0    0    2    2    2    2    2    0    2     0
-## row4    NA    1    0    1    2    0    2    2    0     2
-## row5     2    2    0    0    2    0    0    2    1     2
-## row6     0    2    0   NA    0    0    1    0    0     2
-## row7     0    0    2    2    2    0    0    0    2     0
-## row8     2    0   NA   NA    0    0    0    0    1     2
-## row9     0    0    2    1    2    2    2    0    0     2
-## row10    0    2    2    2    0    0    0    2    2     2
-```
-
-```r
 marker_numeric %>%
   is.na() %>%
   sum()
-```
 
-```
-## [1] 6
-```
-
-```r
 # First, compute the major genotype at each locus.
 major_genotype <- marker_numeric %>%
   sspredr::compute_maf(
@@ -197,31 +113,11 @@ imp_numeric <- marker_numeric %>%
     major_genotype = major_genotype
     )
 print(imp_numeric)
-```
 
-```
-##       col1 col2 col3 col4 col5 col6 col7 col8 col9 col10
-## row1     2    2    0    2    0    2    0    0    0     2
-## row2     2    2    0    2    2    1    2    0    2     2
-## row3     0    0    2    2    2    2    2    0    2     0
-## row4     0    1    0    1    2    0    2    2    0     2
-## row5     2    2    0    0    2    0    0    2    1     2
-## row6     0    2    0    2    0    0    1    0    0     2
-## row7     0    0    2    2    2    0    0    0    2     0
-## row8     2    0    0    2    0    0    0    0    1     2
-## row9     0    0    2    1    2    2    2    0    0     2
-## row10    0    2    2    2    0    0    0    2    2     2
-```
-
-```r
 # Check whether there are still missing values in the marker matrix.
 imp_numeric %>%
   is.na() %>%
   sum()
-```
-
-```
-## [1] 0
 ```
 
 
@@ -237,8 +133,7 @@ excessively large amount of heterozygosity.
 We would like to keep only loci where the heterozygosity rate is less than
 say 10%.
 
-
-```r
+```{r het-loci-names}
 data("imp_snps")
 
 # Return the names of all markers with a heterozygosity of less than 10%.
@@ -249,24 +144,12 @@ het_loci_nms <- sspredr::compute_het(
   )
 
 low_het_snps <- imp_snps[, colnames(imp_snps) %in% het_loci_nms]
-print(paste("The original number of loci was:", nrow(imp_snps)))
-```
-
-```
-## [1] "The original number of loci was: 90"
-```
-
-```r
-print(paste("The number of low-heterozygosity loci is:", nrow(low_het_snps)))
-```
-
-```
-## [1] "The number of low-heterozygosity loci is: 90"
+print(paste("The original number of loci was:", ncol(imp_snps)))
+print(paste("The number of low-heterozygosity loci is:", ncol(low_het_snps)))
 ```
 
 
-
-```r
+```{r loci-het-rate}
 # Return the heterozygosity at each locus.
 loci_het_rate <- imp_snps %>%
   sspredr::compute_het(
@@ -277,30 +160,42 @@ loci_het_rate <- imp_snps %>%
 
 
 
+### Call frequency and minor allele frequency
+In order to remove SNPs with low call frequency, low minor allele frequency
+or to remove duplicated loci you can use the `ensure_snp_quality` function.
+Additionally, if an imputation step is yet missing, this function also
+substitutes missing values with the major allele at any given locus.
 
+Here, we'll use a SNP matrix encoded using the values `0`, `1` and `2` as well
+as missing values and duplicate one of the loci to demonstrate the capabilities
+this function.
 
-
-Moreover, particular in the case of small samples of genotypes, the set of SNPs
-may be characterized by identical marker loci.
-Let's load a set of marker data and recreate such a scenario by creating a
-duplicate of a marker locus and appending it to the marker matrix.
-
-
-```r
+```{r ensure-snp-quality-raw}
 data("marker_numeric")
+
+# Add a duplicated marker locus to the matrix.
 snp <- marker_numeric
-
-# Add a duplicated marker locus.
 snp <- cbind(snp, snp[, 1])
-
-# Check whether any marker locus is a duplicate of another locus.
-snp %>%
-  duplicated(., MARGIN = 2) %>%
-  sum()
+print(snp)
 ```
 
-```
-## [1] 1
-```
+We will check the call frequency and the minor allele frequency at each locus,
+specify that the matrix contains missing values by specifying `any_missing=TRUE`
+and remove duplicated marker loci:
 
+```{r ensure-snp-quality-clean}
+clean_snps <- sspredr::ensure_snp_quality(
+  snp = marker_numeric,
+  callfreq_check = TRUE,
+  callfreq_threshold = 0.95,
+  maf_check = TRUE,
+  maf_threshold = 0.05,
+  any_missing = TRUE,
+  missing_value = NA_real_,
+  remove_duplicated = TRUE
+  )
 
+print(paste("The original number of loci was:", ncol(marker_numeric)))
+print(paste("The number of loci after quality checking is:", ncol(clean_snps)))
+print(clean_snps)
+```

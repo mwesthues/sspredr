@@ -23,4 +23,25 @@ The main functionality of `sspred` entails:
 4.   Create ETA objects for single-step prediction using BGLR.
 
 
+## SNP conversion
+```{r}
+library("sspredr")
+data("imp_snps")
 
+# Return the names of all markers with a heterozygosity of less than 10%.
+het_loci_nms <- compute_het(
+  x = imp_snps,
+  output = "marker_names",
+  het_threshold = 0.1
+  )
+```
+
+
+```{r}
+# Return the heterozygosity at each locus.
+loci_het_rate <- compute_het(
+  x = imp_snps,
+  output = "marker_heterozygosity",
+  het_threshold = 0
+  )
+```

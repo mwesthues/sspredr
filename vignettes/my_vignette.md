@@ -21,7 +21,18 @@ The main functionality of `sspred` entails:
 4.   Create ETA objects for single-step prediction using BGLR.
 
 
-## SNP conversion
+## Genotype encoding
+Depending on the technology for calling SNP reads and depending on the data
+format that you're using for storing SNP data you will have entries in your
+SNP matrix that are either coded as strings, numeric values or integer values.
+The function `recode_snps` can translate between the string- and the
+number-representation while taking into account which value encodes a major or
+a minor allele at any locus.
+
+First determine the major and minor allele at each locus of SNP-genotypes.
+We set the argument 'maf_threshold' to zero because at this point we do not
+want to apply a quality check for minor allele frequency.
+
 
 ```r
 library("sspredr")
@@ -44,42 +55,6 @@ library("dplyr")
 ## 
 ##     intersect, setdiff, setequal, union
 ```
-
-```r
-data("imp_snps")
-
-# Return the names of all markers with a heterozygosity of less than 10%.
-het_loci_nms <- imp_snps %>%
-  sspredr::compute_het(
-    output = "marker_names",
-    het_threshold = 0.1
-    )
-```
-
-
-
-```r
-# Return the heterozygosity at each locus.
-loci_het_rate <- imp_snps %>%
-  sspredr::compute_het(
-    output = "marker_heterozygosity",
-    het_threshold = 0
-    )
-```
-
-
-## Genotype encoding
-Depending on the technology for calling SNP reads and depending on the data
-format that you're using for storing SNP data you will have entries in your
-SNP matrix that are either coded as strings, numeric values or integer values.
-The function `recode_snps` can translate between the string- and the
-number-representation while taking into account which value encodes a major or
-a minor allele at any locus.
-
-First determine the major and minor allele at each locus of SNP-genotypes.
-We set the argument 'maf_threshold' to zero because at this point we do not
-want to apply a quality check for minor allele frequency.
-
 
 ```r
 data("marker_character")
@@ -250,9 +225,55 @@ imp_numeric %>%
 ```
 
 
+
 ## SNP quality filtering
 In any genomic prediction it is crucial to filter SNPs based on the criteria
 call frequency, minor allele frequency and heteroyzgosity rate.
+
+
+### SNP heterozygosity
+In the following example we have a matrix of SNPs where some loci comprise an
+excessively large amount of heterozygosity.
+We would like to keep only loci where the heterozygosity rate is less than
+say 10%.
+
+
+```r
+data("imp_snps")
+
+# Return the names of all markers with a heterozygosity of less than 10%.
+het_loci_nms <- sspredr::compute_het(
+  imp_snps,
+  output = "marker_names",
+  het_threshold = 0.1
+  )
+
+low_het_snps <- imp_snps[, colnames(imp_snps) %in% het_loci_nms]
+print(paste("The original number of loci was:", nrow(imp_snps)))
+```
+
+```
+## [1] "The original number of loci was: 90"
+```
+
+```r
+print(paste("The number of low-heterozygosity loci is:", nrow(low_het_snps)))
+```
+
+```
+## [1] "The number of low-heterozygosity loci is: 90"
+```
+
+
+
+```r
+# Return the heterozygosity at each locus.
+loci_het_rate <- imp_snps %>%
+  sspredr::compute_het(
+    output = "marker_heterozygosity",
+    het_threshold = 0
+    )
+```
 
 
 

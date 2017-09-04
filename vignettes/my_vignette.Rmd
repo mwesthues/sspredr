@@ -21,31 +21,6 @@ The main functionality of `sspred` entails:
 4.   Create ETA objects for single-step prediction using BGLR.
 
 
-## SNP conversion
-```{r het-loci-names}
-library("sspredr")
-library("dplyr")
-data("imp_snps")
-
-# Return the names of all markers with a heterozygosity of less than 10%.
-het_loci_nms <- imp_snps %>%
-  sspredr::compute_het(
-    output = "marker_names",
-    het_threshold = 0.1
-    )
-```
-
-
-```{r loci-het-rate}
-# Return the heterozygosity at each locus.
-loci_het_rate <- imp_snps %>%
-  sspredr::compute_het(
-    output = "marker_heterozygosity",
-    het_threshold = 0
-    )
-```
-
-
 ## Genotype encoding
 Depending on the technology for calling SNP reads and depending on the data
 format that you're using for storing SNP data you will have entries in your
@@ -59,6 +34,9 @@ We set the argument 'maf_threshold' to zero because at this point we do not
 want to apply a quality check for minor allele frequency.
 
 ```{r genotype-encoding-compute-maf}
+library("sspredr")
+library("dplyr")
+
 data("marker_character")
 
 # Check the original data format.
@@ -138,13 +116,44 @@ imp_numeric %>%
 ```
 
 
+
 ## SNP quality filtering
 In any genomic prediction it is crucial to filter SNPs based on the criteria
 call frequency, minor allele frequency and heteroyzgosity rate.
 
-```{r snp-heterozygosity}
 
+### SNP heterozygosity
+In the following example we have a matrix of SNPs where some loci comprise an
+excessively large amount of heterozygosity.
+We would like to keep only loci where the heterozygosity rate is less than
+say 10%.
+
+```{r het-loci-names}
+data("imp_snps")
+
+# Return the names of all markers with a heterozygosity of less than 10%.
+het_loci_nms <- sspredr::compute_het(
+  imp_snps,
+  output = "marker_names",
+  het_threshold = 0.1
+  )
+
+low_het_snps <- imp_snps[, colnames(imp_snps) %in% het_loci_nms]
+print(paste("The original number of loci was:", ncol(imp_snps)))
+print(paste("The number of low-heterozygosity loci is:", ncol(low_het_snps)))
 ```
+
+
+```{r loci-het-rate}
+# Return the heterozygosity at each locus.
+loci_het_rate <- imp_snps %>%
+  sspredr::compute_het(
+    output = "marker_heterozygosity",
+    het_threshold = 0
+    )
+```
+
+
 
 
 
